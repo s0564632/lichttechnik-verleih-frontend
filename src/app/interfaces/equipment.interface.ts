@@ -1,8 +1,8 @@
 export interface Equipment {
-  _id: string;        
+  id: string | number;
   name: string;
-  category: string;
-  price: number;
-  available: boolean;
-  description?: string;
+  verfuegbar: boolean;
+  beschreibung?: string;
+  kategorie?: string;
+  preis: number;
 }
