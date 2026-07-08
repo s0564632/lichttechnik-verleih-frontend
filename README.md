@@ -36,6 +36,10 @@ Das Frontend-Grundgerüst, die Datenbeschaffung sowie die responsive Benutzerobe
 **Problem:** Nach der Isolation von Feature-Zweigen mittels Git kam es zu einem temporären strukturellen Mismatch zwischen dem fortgeschrittenen HTML-Template und den zugrundeliegenden TypeScript-Dateien. Der Compiler meldete 12 Defizite (u. a. fehlende Property-Zuweisungen auf dem `Equipment`-Typ sowie ein blockiertes `ngClass`-Binding).
 **Lösung:** Das `Equipment`-Interface wurde um die fehlenden optionalen und strikten Entitätsfelder erweitert. Zudem wurde das `CommonModule` explizit in die `imports` der Standalone-Komponente aufgenommen, um die Angular-Direktiven für das Template nutzbar zu machen und den Build-Prozess zu stabilisieren.
 
+### 5. Feldbezeichner-Mismatch (Nomenklatur-Inkonsistenz) zwischen API-Payload und UI-Template
+**Problem:** Nach erfolgreicher Integration des HTTP-Services blockierten Compilerfehler des Typs `TS2339: Property '...' does not exist on type 'Equipment'` die Anwendung. Die REST-API lieferte die MongoDB-Dokumente mit englischen Feldbezeichnern (`_id`, `category`, `priceDay`, `description`, `quantity`), während die lokale Datenmodellierung im Frontend noch auf obsoleten deutschen Variablen (`id`, `kategorie`, `preis`, `beschreibung`, `verfuegbar`) aufbaute.
+**Lösung:** Das TypeScript-Interface (`equipment.interface.ts`) sowie das deklarative HTML-Template (`app.html`) wurden vollständig auf die englische Datenstruktur des Backends refaktoriert, um die strukturelle Typsicherheit zur Compile-Zeit wiederherzustellen.
+
 ## Zukünftige Erweiterungen / Roadmap
 
 Die folgenden Implementierungsschritte sind für die clientseitige Entwicklung geplant:
