@@ -1,8 +1,13 @@
 export interface Equipment {
-  id: string | number;
+  _id: string;
   name: string;
-  verfuegbar: boolean;
-  beschreibung?: string;
-  kategorie?: string;
-  preis: number;
+  category: string;
+  quantity: number;
+  priceDay: number;
+  description: string;
+  lengthValue?: number | null;
+  lengthUnit?: string;
+  __v?: number;
+  createdAt?: string;
+  updatedAt?: string;
 }
