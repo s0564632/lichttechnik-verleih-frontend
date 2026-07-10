@@ -17,6 +17,7 @@ Das Frontend-Grundgerüst, die Datenbeschaffung sowie die responsive Benutzerobe
 - **Reaktives Zustandsmanagement:** Anbindung des Services an die App-Komponente mittels moderner Angular *Signals* (`signal`) zur performanten, feingranularen Datenverwaltung.
 - **Datenschicht-Typisierung:** Erstellung eines dedizierten TypeScript-Interfaces (`Equipment`), welches die Datenstruktur der MongoDB-Dokumente zur Compile-Zeit absichert.
 - **Responsive Bestands-Visualisierung (Ticket #10):** Realisierung eines dynamischen Grid-Layouts mittels Bootstrap-Cards. Die Anzeige verfügt über integriertes Lade- und Fehlermanagement (Spinner/Alert-Erkennung via Signals) sowie kontextbasierte Status-Badges („Bereit“ / „Verliehen“) via `ngClass`.
+- **Reaktive Such- und Filterpipeline (Ticket #11):** Integration einer echtzeitfähigen Suchleiste sowie einer dynamischen Kategorieregelung. Die Zustandstransformation wird über caching-optimierte `computed` Signals gesteuert, um redundante Array-Operationen bei UI-Repaints zu unterbinden und die Filterkategorien duplikatfrei zur Laufzeit aus dem Datenstrom zu extrahieren.
 
 ## Dokumentation technischer Herausforderungen
 
@@ -40,8 +41,11 @@ Das Frontend-Grundgerüst, die Datenbeschaffung sowie die responsive Benutzerobe
 **Problem:** Nach erfolgreicher Integration des HTTP-Services blockierten Compilerfehler des Typs `TS2339: Property '...' does not exist on type 'Equipment'` die Anwendung. Die REST-API lieferte die MongoDB-Dokumente mit englischen Feldbezeichnern (`_id`, `category`, `priceDay`, `description`, `quantity`), während die lokale Datenmodellierung im Frontend noch auf obsoleten deutschen Variablen (`id`, `kategorie`, `preis`, `beschreibung`, `verfuegbar`) aufbaute.
 **Lösung:** Das TypeScript-Interface (`equipment.interface.ts`) sowie das deklarative HTML-Template (`app.html`) wurden vollständig auf die englische Datenstruktur des Backends refaktoriert, um die strukturelle Typsicherheit zur Compile-Zeit wiederherzustellen.
 
+### 6. Inhaltlicher Dokumentationskonflikt bei Branch-Zusammenführung
+**Problem:** Beim Mergen des Feature-Branches zur Fehlerbehebung in den Hauptzweig (`main`) trat ein struktureller Konflikt in der Datei `README.md` auf, welcher den automatischen Integrationsprozess blockierte.
+**Lösung:** Der Konflikt wurde über die Konsole aufgelöst, indem die Version des Hauptzweigs mittels `git checkout --ours README.md` temporär isoliert und die Datei anschließend über eine manuelle Index-Registrierung (`git add`) sowie einen dedizierten Merge-Commit erfolgreich konsolidiert wurde.
+
 ## Zukünftige Erweiterungen / Roadmap
 
 Die folgenden Implementierungsschritte sind für die clientseitige Entwicklung geplant:
-1. **Filter- und Suchfunktionen:** Implementierung clientseitiger Such- und Filtermechanismen zur effizienten Navigation innerhalb des Verleih-Sortiments (z.B. nach Kategorie oder Verfügbarkeit).
-2. **Echtzeit-Validierung:** Integration von reaktiven Formularen (`ReactiveFormsModule`) für das spätere Hinzufügen neuer Lichttechnik-Komponenten.
+1. **Echtzeit-Validierung:** Integration von reaktiven Formularen (`ReactiveFormsModule`) für das spätere Hinzufügen neuer Lichttechnik-Komponenten.
