@@ -2,6 +2,7 @@
   
   <h1 class="mb-4 text-dark font-weight-bold">{{ title() }}</h1>
 
+  <!-- State Handler: Global asynchronous loading spinner -->
   @if (isLoading()) {
     <div class="d-flex justify-content-center my-5">
       <div class="spinner-border text-primary" role="status">
@@ -10,17 +11,43 @@
     </div>
   }
 
+  <!-- State Handler: Explicit error tracing boundary -->
   @if (errorMessage()) {
     <div class="alert alert-danger shadow-sm" role="alert">
       {{ errorMessage() }}
     </div>
   }
 
+  <!-- Operational Area: Rendered exclusively upon valid data resolution -->
   @if (!isLoading() && !errorMessage()) {
+    
+    <!-- Control Panel: Contextual filter deck synchronized with active write-signals -->
+    <div class="row g-3 mb-4 p-3 bg-light rounded shadow-sm">
+      <div class="col-md-8">
+        <label class="form-label small text-muted fw-bold">Nach Name oder Beschreibung suchen</label>
+        <input type="text" 
+               class="form-control" 
+               placeholder="Z.B. 'Moving Head' oder Spezifikationen..."
+               [ngModel]="searchTerm()" 
+               (ngModelChange)="searchTerm.set($event)">
+      </div>
+      <div class="col-md-4">
+        <label class="form-label small text-muted fw-bold">Kategorie filtern</label>
+        <select class="form-select" 
+                [ngModel]="selectedCategory()" 
+                (ngModelChange)="selectedCategory.set($event)">
+          <option value="all">Alle Kategorien</option>
+          @for (cat of dynamischeKategorien(); track cat) {
+            <option [value]="cat">{{ cat }}</option>
+          }
+        </select>
+      </div>
+    </div>
+
+    <!-- Inventory Grid: Evaluates the reactive projection vector (filtered view) -->
     <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-4">
       
-      <!-- Auf item._id geändert -->
-      @for (item of equipmentListe(); track item._id) {
+      @for (item of filteredEquipmentListe(); track item._id) {
         <div class="col">
           <div class="card h-100 shadow-sm border-0 bg-white">
             
@@ -29,30 +56,27 @@
                 <h5 class="card-title mb-0 text-truncate" style="max-width: 80%;">
                   {{ item.name }}
                 </h5>
-                <!-- Auf item.quantity > 0 geändert -->
                 <span class="badge" [ngClass]="item.quantity > 0 ? 'bg-success text-white' : 'bg-danger text-white'">
                   {{ item.quantity > 0 ? 'Bereit' : 'Verliehen' }}
                 </span>
               </div>
               
-              <!-- Auf item.description geändert -->
               <p class="card-text text-muted small">
                 {{ item.description || 'Keine Beschreibung hinterlegt.' }}
               </p>
             </div>
 
             <div class="card-footer bg-light border-top-0 d-flex justify-content-between align-items-center py-3">
-              <!-- Auf item.category geändert -->
               <span class="text-muted small">Kategorie: <strong>{{ item.category || 'Allgemein' }}</strong></span>
-              <!-- Auf item.priceDay geändert -->
               <span class="text-primary fw-bold">{{ item.priceDay }} € <span class="text-muted small fw-normal">/ Tag</span></span>
             </div>
 
           </div>
         </div>
       } @empty {
+        <!-- Empty State Fallback: Triggers on empty source arrays as well as non-matching search predicates -->
         <div class="col-12 text-center my-5 text-muted">
-          <p class="fs-5">Derzeit ist kein Equipment im System eingetragen.</p>
+          <p class="fs-5">Keine Geräte entsprechen den gewählten Such- oder Filterkriterien.</p>
         </div>
       }
 
