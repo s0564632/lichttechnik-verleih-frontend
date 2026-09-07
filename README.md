@@ -10,19 +10,42 @@ Dieses Repository enthält die clientseitige Benutzeroberfläche (Frontend) der 
 
 ## Aktueller Entwicklungsstand
 
-Das Frontend-Grundgerüst wurde erfolgreich aufgesetzt:
+Das Frontend-Grundgerüst, die Datenbeschaffung sowie die responsive Benutzeroberfläche wurden erfolgreich implementiert:
 - **Workspace-Architektur:** Initialisierung des Angular-Projekts inklusive Routing-Konfiguration und strikter Typisierung.
-- **UI-Infrastruktur:** Lokale Installation des Bootstrap-Frameworks und globale Registrierung über die Konfigurationsdatei `angular.json`, um responsive UI-Komponenten zu gewährleisten.
+- **UI-Infrastruktur:** Lokale Installation des Bootstrap-Frameworks und globale Registrierung über die Konfigurationsdatei `angular.json`.
+- **API-Service-Integration:** Implementierung eines zentralen asynchronen Datendienstes (`EquipmentService`) unter Verwendung des Angular `HttpClient` zur Kommunikation mit der Express-REST-API (`http://localhost:3000/api/equipment`).
+- **Reaktives Zustandsmanagement:** Anbindung des Services an die App-Komponente mittels moderner Angular *Signals* (`signal`) zur performanten, feingranularen Datenverwaltung.
+- **Datenschicht-Typisierung:** Erstellung eines dedizierten TypeScript-Interfaces (`Equipment`), welches die Datenstruktur der MongoDB-Dokumente zur Compile-Zeit absichert.
+- **Responsive Bestands-Visualisierung (Ticket #10):** Realisierung eines dynamischen Grid-Layouts mittels Bootstrap-Cards. Die Anzeige verfügt über integriertes Lade- und Fehlermanagement (Spinner/Alert-Erkennung via Signals) sowie kontextbasierte Status-Badges („Bereit“ / „Verliehen“) via `ngClass`.
+- **Reaktive Such- und Filterpipeline (Ticket #11):** Integration einer echtzeitfähigen Suchleiste sowie einer dynamischen Kategorieregelung. Die Zustandstransformation wird über caching-optimierte `computed` Signals gesteuert, um redundante Array-Operationen bei UI-Repaints zu unterbinden und die Filterkategorien duplikatfrei zur Laufzeit aus dem Datenstrom zu extrahieren.
 
 ## Dokumentation technischer Herausforderungen
 
 ### 1. Merge-Konflikte bei der Projekt-Initialisierung
-**Problem:** Bei der Erstellung des Angular-Workspaces direkt im Projektverzeichnis mittels Angular CLI kam es zu Dateikonflikten mit den bereits durch GitHub automatisch generierten Dateien (`.gitignore` und `README.md`). Die CLI brach den Vorgang ab, um bestehende Daten nicht zu überschreiben.
-**Lösung:** Das Verzeichnis wurde manuell bereinigt (Entfernung der blockierenden, rudimentären GitHub-Dateien). Anschließend wurde der Initialisierungsbefehl der Angular CLI erneut ausgeführt, wodurch die vollständige und optimierte Angular-Dateistruktur (inklusive einer dedizierten `.gitignore` für Node.js-Projekte) fehlerfrei generiert werden konnte.
+**Problem:** Bei der Erstellung des Angular-Workspaces direkt im Projektverzeichnis mittels Angular CLI kam es zu Dateikonflikten mit den bereits durch GitHub automatisch generierten Dateien (`.gitignore` und `README.md`). 
+**Lösung:** Das Verzeichnis wurde manuell bereinigt. Anschließend wurde der Initialisierungsbefehl der Angular CLI erneut ausgeführt, wodurch die vollständige Angular-Dateistruktur fehlerfrei generiert werden konnte.
+
+### 2. Typisierungs- und Compilerkonflikte beim TypeScript-Build
+**Problem:** Der Compiler meldete Fehler bezüglich fehlender Typdefinitionen für das Test-Framework `jasmine` innerhalb der Datei `tsconfig.spec.json`. Parallel dazu traten implizite `any`-Typfehler bei den API-Callback-Parametern auf.
+**Lösung:** Die globalen Test-Typen im `types`-Array der `tsconfig.spec.json` wurden geleert. Die impliziten Typen wurden durch eine explizite Typisierung der Callback-Parameter (`data: Equipment[]`, `error: any`) im Datenstrom aufgelöst.
+
+### 3. Fehlendes Injection-Token im Komponenten-Constructor
+**Problem:** Aufgrund der restriktiven Konfiguration der TypeScript-Metadaten verweigerte Angular die klassische Constructor-Injection des `EquipmentService` innerhalb der Hauptkomponente (`No suitable injection token`).
+**Lösung:** Die Architektur wurde auf die funktionale Dependency Injection von Angular umgestellt. Der Service wird nun direkt als Klassenattribut über die integrierte `inject()`-Funktion instanziiert.
+
+### 4. Template- und Typisierungsasynchronität nach Git-Operationen
+**Problem:** Nach der Isolation von Feature-Zweigen mittels Git kam es zu einem temporären strukturellen Mismatch zwischen dem fortgeschrittenen HTML-Template und den zugrundeliegenden TypeScript-Dateien. Der Compiler meldete 12 Defizite (u. a. fehlende Property-Zuweisungen auf dem `Equipment`-Typ sowie ein blockiertes `ngClass`-Binding).
+**Lösung:** Das `Equipment`-Interface wurde um die fehlenden optionalen und strikten Entitätsfelder erweitert. Zudem wurde das `CommonModule` explizit in die `imports` der Standalone-Komponente aufgenommen, um die Angular-Direktiven für das Template nutzbar zu machen und den Build-Prozess zu stabilisieren.
+
+### 5. Feldbezeichner-Mismatch (Nomenklatur-Inkonsistenz) zwischen API-Payload und UI-Template
+**Problem:** Nach erfolgreicher Integration des HTTP-Services blockierten Compilerfehler des Typs `TS2339: Property '...' does not exist on type 'Equipment'` die Anwendung. Die REST-API lieferte die MongoDB-Dokumente mit englischen Feldbezeichnern (`_id`, `category`, `priceDay`, `description`, `quantity`), während die lokale Datenmodellierung im Frontend noch auf obsoleten deutschen Variablen (`id`, `kategorie`, `preis`, `beschreibung`, `verfuegbar`) aufbaute.
+**Lösung:** Das TypeScript-Interface (`equipment.interface.ts`) sowie das deklarative HTML-Template (`app.html`) wurden vollständig auf die englische Datenstruktur des Backends refaktoriert, um die strukturelle Typsicherheit zur Compile-Zeit wiederherzustellen.
+
+### 6. Inhaltlicher Dokumentationskonflikt bei Branch-Zusammenführung
+**Problem:** Beim Mergen des Feature-Branches zur Fehlerbehebung in den Hauptzweig (`main`) trat ein struktureller Konflikt in der Datei `README.md` auf, welcher den automatischen Integrationsprozess blockierte.
+**Lösung:** Der Konflikt wurde über die Konsole aufgelöst, indem die Version des Hauptzweigs mittels `git checkout --ours README.md` temporär isoliert und die Datei anschließend über eine manuelle Index-Registrierung (`git add`) sowie einen dedizierten Merge-Commit erfolgreich konsolidiert wurde.
 
 ## Zukünftige Erweiterungen / Roadmap
 
 Die folgenden Implementierungsschritte sind für die clientseitige Entwicklung geplant:
-1. **API-Service-Integration (Ticket #6):** Erstellung eines Angular-Daten-Services (`EquipmentService`) unter Nutzung des `HttpClient`, um asynchrone Anfragen an das Express-Backend zu senden.
-2. **Bestands-Komponente (Ticket #6):** Entwicklung einer responsiven Übersichtskomponente (Grid- oder Tabellen-Layout) mithilfe von Bootstrap-Cards zur strukturierten Darstellung von Geräten, Preisen und Verfügbarkeiten.
-3. **Filter- und Suchfunktionen:** Implementierung clientseitiger Such- und Filtermechanismen zur effizienten Navigation innerhalb des Verleih-Sortiments.
+1. **Echtzeit-Validierung:** Integration von reaktiven Formularen (`ReactiveFormsModule`) für das spätere Hinzufügen neuer Lichttechnik-Komponenten.
