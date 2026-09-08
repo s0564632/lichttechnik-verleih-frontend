@@ -82,4 +82,16 @@ export class App implements OnInit {
       }
     });
   }
+
+  public rentEquipment(id: string): void {
+    this.equipmentService.rentEquipment(id).subscribe({
+      next: (updatedEquipment: Equipment) => {
+        this.equipmentListe.update(items => items.map(item => item._id === updatedEquipment._id ? updatedEquipment : item));
+      },
+      error: (error: unknown) => {
+        console.error('[AppCore] Equipment rental failed:', error);
+        this.errorMessage.set('Miete des Equipments fehlgeschlagen.');
+      }
+    }); 
+  }
 }

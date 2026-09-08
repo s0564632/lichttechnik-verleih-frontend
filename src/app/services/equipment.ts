@@ -14,4 +14,8 @@ export class EquipmentService {
   getEquipment(): Observable<Equipment[]> {
     return this.http.get<Equipment[]>(this.apiUrl);
   }
+
+  rentEquipment(id: string): Observable<Equipment> {
+    return this.http.patch<Equipment>(`${this.apiUrl}/${id}/rent`, {});
+  } 
 }
