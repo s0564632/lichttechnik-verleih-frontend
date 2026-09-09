@@ -18,4 +18,16 @@ export class EquipmentService {
   rentEquipment(id: string): Observable<Equipment> {
     return this.http.patch<Equipment>(`${this.apiUrl}/${id}/rent`, {});
   } 
+
+  createEquipment(equipment: Equipment): Observable<Equipment> {
+    return this.http.post<Equipment>(this.apiUrl, equipment);
+  }
+
+  updateEquipment(id: string, equipment: Equipment): Observable<Equipment> {
+    return this.http.put<Equipment>(`${this.apiUrl}/${id}`, equipment);
+  }
+
+  deleteEquipment(id: string): Observable<void> {
+    return this.http.delete<void>(`${this.apiUrl}/${id}`);
+  } 
 }
