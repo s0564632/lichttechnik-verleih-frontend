@@ -1,17 +1,19 @@
-import { Component, signal, computed, OnInit } from '@angular/core';
+import { Component, signal, computed, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common'; 
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { EquipmentService } from './services/equipment'; 
 import { Equipment } from './interfaces/equipment.interface';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [CommonModule, FormsModule], 
+  imports: [CommonModule, FormsModule, ReactiveFormsModule], 
   templateUrl: './app.html',
   styleUrls: ['./app.css'],
 })
 export class App implements OnInit {
+  private readonly fb = inject(FormBuilder);
+
   protected readonly title = signal('lichttechnik-verleih-frontend');
   
   protected readonly equipmentListe = signal<Equipment[]>([]);
@@ -20,6 +22,17 @@ export class App implements OnInit {
 
   protected readonly searchTerm = signal<string>('');
   protected readonly selectedCategory = signal<string>('all');
+
+  // --- NEU: Zustand & Validierung für das Erstellen-Modal ---
+  protected readonly showCreateModal = signal<boolean>(false);
+
+  protected readonly equipmentForm: FormGroup = this.fb.group({
+    name: ['', [Validators.required, Validators.minLength(3)]],
+    category: ['', Validators.required],
+    priceDay: [0, [Validators.required, Validators.min(0.01)]],
+    quantity: [1, [Validators.required, Validators.min(0)]],
+    description: ['']
+  });
 
   /**
    * Extracts unique equipment categories dynamically.
@@ -94,4 +107,27 @@ export class App implements OnInit {
       }
     }); 
   }
+
+  // --- NEU: Handlers für das Create-Formular ---
+  public toggleCreateModal(): void {
+    this.showCreateModal.update(val => !val);
+  }
+
+  public onSubmitCreate(): void {
+    if (this.equipmentForm.valid) {
+      const newEquipment = this.equipmentForm.value;
+      this.equipmentService.createEquipment(newEquipment).subscribe({
+        next: (createdItem: Equipment) => {
+          this.equipmentListe.update(items => [...items, createdItem]);
+          this.equipmentForm.reset({ priceDay: 0, quantity: 1 });
+          this.showCreateModal.set(false);
+        },
+        error: (error: unknown) => {
+          console.error('[AppCore] Equipment creation failed:', error);
+          this.errorMessage.set('Erstellen des Equipments fehlgeschlagen.');
+        }
+      });
+    }
+  }
 }
+
