@@ -1,13 +1,13 @@
 import { Component, signal, computed, OnInit, inject } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { CommonModule } from '@angular/common'; 
 import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { EquipmentService } from './services/equipment';
+import { EquipmentService } from './services/equipment'; 
 import { Equipment } from './interfaces/equipment.interface';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [CommonModule, FormsModule, ReactiveFormsModule],
+  imports: [CommonModule, FormsModule, ReactiveFormsModule], 
   templateUrl: './app.html',
   styleUrls: ['./app.css'],
 })
@@ -15,7 +15,7 @@ export class App implements OnInit {
   private readonly fb = inject(FormBuilder);
 
   protected readonly title = signal('lichttechnik-verleih-frontend');
-
+  
   protected readonly equipmentListe = signal<Equipment[]>([]);
   protected readonly isLoading = signal<boolean>(true);
   protected readonly errorMessage = signal<string | null>(null);
@@ -70,11 +70,11 @@ export class App implements OnInit {
     }
 
     return dataSet.filter(equipment => {
-      const matchesSearch = !rawSearch ||
-        equipment.name.toLowerCase().includes(rawSearch) ||
+      const matchesSearch = !rawSearch || 
+        equipment.name.toLowerCase().includes(rawSearch) || 
         (equipment.description || '').toLowerCase().includes(rawSearch);
-
-      const matchesCategory = selectedCategory === 'all' ||
+        
+      const matchesCategory = selectedCategory === 'all' || 
         (equipment.category || 'Allgemein') === selectedCategory;
 
       return matchesSearch && matchesCategory;
@@ -98,12 +98,12 @@ export class App implements OnInit {
     this.equipmentService.getEquipment().subscribe({
       next: (data: Equipment[]) => {
         this.equipmentListe.set(data);
-        this.isLoading.set(false);
+        this.isLoading.set(false); 
       },
       error: (error: unknown) => {
         console.error('[AppCore] Critical API link failure:', error);
         this.errorMessage.set('Verbindung zum Server fehlgeschlagen.');
-        this.isLoading.set(false);
+        this.isLoading.set(false); 
       }
     });
   }
@@ -117,12 +117,12 @@ export class App implements OnInit {
         console.error('[AppCore] Equipment rental failed:', error);
         this.errorMessage.set('Miete des Equipments fehlgeschlagen.');
       }
-    });
+    }); 
   }
 
   public openEditModal(equipment: Equipment): void {
     this.selectedEquipment.set(equipment);
-
+   
     this.editEquipmentForm.patchValue({
       name: equipment.name,
       category: equipment.category,
@@ -133,6 +133,56 @@ export class App implements OnInit {
     this.showEditModal.set(true);
   }
 
+    public onSubmitEdit(): void {
+    const equipment = this.selectedEquipment();
+
+    if (!equipment?._id || this.editEquipmentForm.invalid) {
+      return;
+    }
+
+    const updatedEquipment = this.editEquipmentForm.value;
+
+    this.equipmentService.updateEquipment(
+      equipment._id,
+      updatedEquipment
+    ).subscribe({
+      next: (updatedItem: Equipment) => {
+        this.equipmentListe.update(items =>
+          items.map(item =>
+            item._id === updatedItem._id
+              ? updatedItem
+              : item
+          )
+        );
+
+        this.showEditModal.set(false);
+        this.selectedEquipment.set(null);
+
+        this.editEquipmentForm.reset({
+          priceDay: 0,
+          quantity: 1
+        });
+      },
+
+      error: (error: unknown) => {
+        console.error('[AppCore] Equipment update failed:', error);
+        this.errorMessage.set(
+          'Aktualisierung des Equipments fehlgeschlagen.'
+        );
+      }
+    });
+  }
+
+  public closeEditModal(): void {
+    this.showEditModal.set(false);
+    this.selectedEquipment.set(null);
+
+    this.editEquipmentForm.reset({
+      priceDay: 0,
+      quantity: 1
+    });
+  }
+  
   // --- NEU: Handlers für das Create-Formular ---
   public toggleCreateModal(): void {
     this.showCreateModal.update(val => !val);
