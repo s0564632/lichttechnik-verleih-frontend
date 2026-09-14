@@ -1,5 +1,5 @@
 <div class="container my-5">
-  
+
   <h1 class="mb-4 text-dark font-weight-bold">{{ title() }}</h1>
 
   <!-- State Handler: Global asynchronous loading spinner -->
@@ -18,24 +18,24 @@
     </div>
   }
 
-<!--Hauptbereich mit Suche, Filter und Equipment-Liste -->>  
+<!--Hauptbereich mit Suche, Filter und Equipment-Liste-->
 @if (!isLoading() && !errorMessage()) {
-    
+
     <!-- Control Panel: Contextual filter deck synchronized with active write-signals -->
     <div class="row g-3 mb-4 p-3 bg-light rounded shadow-sm">
       <div class="col-md-8">
         <label class="form-label small text-muted fw-bold">Nach Name oder Beschreibung suchen</label>
-        <input type="text" 
-               class="form-control" 
+        <input type="text"
+               class="form-control"
                placeholder="Z.B. 'Moving Head' oder Spezifikationen..."
-               [ngModel]="searchTerm()" 
+               [ngModel]="searchTerm()"
                (ngModelChange)="searchTerm.set($event)">
       </div>
 
       <div class="col-md-4">
         <label class="form-label small text-muted fw-bold">Kategorie filtern</label>
-        <select class="form-select" 
-                [ngModel]="selectedCategory()" 
+        <select class="form-select"
+                [ngModel]="selectedCategory()"
                 (ngModelChange)="selectedCategory.set($event)">
           <option value="all">Alle Kategorien</option>
 
@@ -48,11 +48,11 @@
 
     <!-- Inventory Grid: Evaluates the reactive projection vector (filtered view) -->
     <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-4">
-      
+
       @for (item of filteredEquipmentListe(); track item._id) {
         <div class="col">
           <div class="card h-100 shadow-sm border-0 bg-white">
-            
+
             <div class="card-body">
               <div class="d-flex justify-content-between align-items-start mb-2">
                 <h5 class="card-title mb-0 text-truncate" style="max-width: 80%;">
@@ -63,7 +63,7 @@
                   {{ item.quantity > 0 ? 'Bereit' : 'Verliehen' }}
                 </span>
               </div>
-              
+
               <p class="card-text text-muted small">
                 {{ item.description || 'Keine Beschreibung hinterlegt.' }}
               </p>
@@ -95,6 +95,13 @@
                   (click)="openEditModal(item)">
                   Bearbeiten
                 </button>
+
+                <button
+                  type="button"
+                  class="btn btn-outline-danger"
+                  (click)="openDeleteModal(item)">
+                  Löschen
+                </button>
               </div>
 
             </div>
@@ -113,7 +120,7 @@
   }
   <!-- Formular zum Erstellen eines Equipment -->
   @if (showCreateModal()) {
-    
+
   }
 
   @if (showEditModal()) {
@@ -241,6 +248,67 @@
         </div>
       </div>
     </div>
+
  <div class="modal-backdrop fade show"></div>
   }
+
+  <!--Löschen-Modal-->
+  @if(showDeleteModal()) {
+    <div class="modal d-block" tabindex="-1" role="dialog">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+
+          <div class="modal-header">
+            <h5 class="modal-title">
+              Equipment löschen
+            </h5>
+
+            <button
+              type="button"
+              class="btn-close"
+              aria-label="Schließen"
+              (click)="closeDeleteModal()">
+            </button>
+          </div>
+
+          <div class="modal-body">
+            <p>Sind Sie sicher, dass Sie das Equipment löschen möchten?</p>
+
+            @if(selectedEquipment()) {
+              <p>
+                <strong>
+                  {{ selectedEquipment()?.name }}
+                </strong>
+              </p>
+            }
+            <p class="text-danger small mb-0">
+              Diese Aktion kann nicht rückgängig gemacht werden.
+            </p>
+          </div>
+
+          <div class="modal-footer">
+
+            <button
+              type="button"
+              class="btn btn-secondary"
+              (click)="closeDeleteModal()">
+              Abbrechen
+            </button>
+
+            <button
+              type="button"
+              class="btn btn-danger"
+              (click)="onConfirmDelete()">
+              Löschen
+            </button>
+
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <div class="modal-backdrop fade show"></div>
+  }
+
 </div>
