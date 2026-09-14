@@ -26,7 +26,19 @@ export class App implements OnInit {
   // --- NEU: Zustand & Validierung für das Erstellen-Modal ---
   protected readonly showCreateModal = signal<boolean>(false);
 
+  protected readonly showEditModal = signal<boolean>(false);
+
+  protected readonly selectedEquipment = signal<Equipment | null>(null);
+
   protected readonly equipmentForm: FormGroup = this.fb.group({
+    name: ['', [Validators.required, Validators.minLength(3)]],
+    category: ['', Validators.required],
+    priceDay: [0, [Validators.required, Validators.min(0.01)]],
+    quantity: [1, [Validators.required, Validators.min(0)]],
+    description: ['']
+  });
+
+  protected readonly editEquipmentForm: FormGroup = this.fb.group({
     name: ['', [Validators.required, Validators.minLength(3)]],
     category: ['', Validators.required],
     priceDay: [0, [Validators.required, Validators.min(0.01)]],
@@ -108,6 +120,69 @@ export class App implements OnInit {
     }); 
   }
 
+  public openEditModal(equipment: Equipment): void {
+    this.selectedEquipment.set(equipment);
+   
+    this.editEquipmentForm.patchValue({
+      name: equipment.name,
+      category: equipment.category,
+      priceDay: equipment.priceDay,
+      quantity: equipment.quantity,
+      description: equipment.description
+    });
+    this.showEditModal.set(true);
+  }
+
+    public onSubmitEdit(): void {
+    const equipment = this.selectedEquipment();
+
+    if (!equipment?._id || this.editEquipmentForm.invalid) {
+      return;
+    }
+
+    const updatedEquipment = this.editEquipmentForm.value;
+
+    this.equipmentService.updateEquipment(
+      equipment._id,
+      updatedEquipment
+    ).subscribe({
+      next: (updatedItem: Equipment) => {
+        this.equipmentListe.update(items =>
+          items.map(item =>
+            item._id === updatedItem._id
+              ? updatedItem
+              : item
+          )
+        );
+
+        this.showEditModal.set(false);
+        this.selectedEquipment.set(null);
+
+        this.editEquipmentForm.reset({
+          priceDay: 0,
+          quantity: 1
+        });
+      },
+
+      error: (error: unknown) => {
+        console.error('[AppCore] Equipment update failed:', error);
+        this.errorMessage.set(
+          'Aktualisierung des Equipments fehlgeschlagen.'
+        );
+      }
+    });
+  }
+
+  public closeEditModal(): void {
+    this.showEditModal.set(false);
+    this.selectedEquipment.set(null);
+
+    this.editEquipmentForm.reset({
+      priceDay: 0,
+      quantity: 1
+    });
+  }
+  
   // --- NEU: Handlers für das Create-Formular ---
   public toggleCreateModal(): void {
     this.showCreateModal.update(val => !val);
