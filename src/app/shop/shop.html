@@ -1,0 +1,9 @@
+@for (item of equipmentListe(); track item._id){
+    <div>
+        <h2>{{item.name}}</h2>
+        <p>Kategorie: {{item.category}}</p>
+        <p>Preis pro Tag: {{item.priceDay}} €</p>
+        <p>Anzahl: {{item.quantity}}</p>
+        <p>Beschreibung: {{item.description}}</p>
+    </div>
+}
