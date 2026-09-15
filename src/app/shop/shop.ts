@@ -5,7 +5,7 @@ import { Equipment } from '../interfaces/equipment.interface';
 
 @Component({
   selector: 'app-shop',
-  imports: [],
+  imports: [CommonModule],
   templateUrl: './shop.html',
   styleUrl: './shop.css',
 })
