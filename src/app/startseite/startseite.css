@@ -40,20 +40,14 @@
   max-width: 1200px;
   margin: 0 auto;
   padding: 5rem 2rem;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.5rem;
 }
 
 .kategorien h2 {
   text-align: center;
   margin-bottom: 3rem;
-}
-
-.kategorien {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 1.5rem;
-}
-
-.kategorien h2 {
   grid-column: 1 / -1;
 }
 

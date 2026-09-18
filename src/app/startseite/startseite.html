@@ -1,26 +1,94 @@
 <!-- Navbar-Bereich -->
-<nav class="navbar navbar-expand-lg bg-body-tertiary border-bottom mb-4">
+<nav
+  class="navbar navbar-expand-lg bg-body-tertiary border-bottom mb-4"
+  aria-label="Hauptnavigation"
+>
   <div class="container">
     <!-- Logo / Titel -->
     <a routerLink="/" class="navbar-brand fw-bold">Leons Lichttechnik</a>
 
-    <!-- Menü-Links -->
-    <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-      <li class="nav-item">
-        <a routerLink="/" class="nav-link active" aria-current="page">Startseite</a>
-      </li>
-      <li class="nav-item">
-        <a routerLink="/shop" class="nav-link">Produkte</a>
-      </li>
-      <li class="nav-item">
-        <a routerLink="/verwaltung" class="nav-link">Dienstleistungen</a>
-      </li>
-    </ul>
+    <button
+      class="navbar-toggler"
+      type="button"
+      data-bs-toggle="collapse"
+      data-bs-target="#navbarNav"
+      aria-controls="navbarNav"
+      aria-expanded="false"
+      aria-label="Navigation umschalten"
+    >
+      <span class="navbar-toggler-icon"></span>
+    </button>
 
-    <!-- Suchfeld und Login rechts -->
-    <div class="d-flex align-items-center gap-2">
-      <input class="form-control form-control-sm" type="search" placeholder="Suchen..." aria-label="Search" />
-      <button class="btn btn-outline-dark btn-sm" type="button">Login</button>
+    <div class="collapse navbar-collapse" id="navbarNav">
+      <!-- Menü-Links -->
+      <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+        <li class="nav-item">
+          <a routerLink="/" class="nav-link active" aria-current="page">Startseite</a>
+        </li>
+
+        <!-- Dropdown-Menü -->
+        <li class="nav-item dropdown">
+          <a
+            class="nav-link dropdown-toggle"
+            href="#"
+            id="produkteDropdown"
+            role="button"
+            data-bs-toggle="dropdown"
+            aria-expanded="false"
+          >
+            Produkte
+          </a>
+          <ul
+            class="dropdown-menu p-3 rounded-3 shadow"
+            aria-labelledby="produkteDropdown"
+            style="min-width: 220px; max-height: 400px; overflow-y: auto"
+          >
+            <li>
+              <a class="dropdown-item fw-semibold rounded-2" routerLink="/shop">Alle Produkte</a>
+            </li>
+            <li><hr class="dropdown-divider my-2" /></li>
+            <li><h6 class="dropdown-header fw-bold text-dark px-2">Kategorien</h6></li>
+            <li><hr class="dropdown-divider my-2" /></li>
+
+            @for (gruppe of kategorieGruppen; track gruppe.titel; let last = $last) {
+              <li>
+                <h6 class="dropdown-header text-muted px-2 small">{{ gruppe.titel }}</h6>
+              </li>
+
+              @for (sub of gruppe.unterpunkte; track sub) {
+                <li>
+                  <a
+                    class="dropdown-item rounded-2"
+                    [routerLink]="['/shop']"
+                    [queryParams]="{ kategorie: sub }"
+                    >{{ sub }}</a
+                  >
+                </li>
+              }
+
+              @if (!last) {
+                <li><hr class="dropdown-divider my-2" /></li>
+              }
+            }
+          </ul>
+        </li>
+        <li class="nav-item">
+          <a routerLink="/verwaltung" class="nav-link">Dienstleistungen</a>
+        </li>
+      </ul>
+
+      <!-- Suchfeld und Login rechts -->
+      <div class="d-flex align-items-center gap-2">
+        <label for="site-search" class="visually-hidden">Suche</label>
+        <input
+          id="site-search"
+          class="form-control form-control-sm"
+          type="search"
+          placeholder="Suchen..."
+          aria-label="Search"
+        />
+        <button class="btn btn-outline-dark btn-sm" type="button">Login</button>
+      </div>
     </div>
   </div>
 </nav>
@@ -29,7 +97,7 @@
 <section class="hero text-center text-white py-5">
   <div class="container py-5">
     <h1 class="display-4 fw-bold mb-3">Leons Lichttechnik für dein Event</h1>
-    <p class="lead text-white-50 mb-4 mx-auto" style="max-width: 650px;">
+    <p class="lead text-white-50 mb-4 mx-auto" style="max-width: 650px">
       Wir bieten dir eine große Auswahl an Lichttechnik für dein Event. Egal ob kleine Party oder
       großes Konzert – wir haben die passende Technik für dich.
     </p>
@@ -44,22 +112,22 @@
   <div class="row g-4">
     <div class="col-md-4">
       <div class="p-4 border rounded-3 h-100 bg-white shadow-sm">
-        <h3 class="h4">Scheinwerfer</h3>
-        <p class="text-muted">Professionelle Beleuchtung für deine Veranstaltung.</p>
+        <h3 class="h4">Produkte</h3>
+        <p class="text-muted">Kategorie und Auswahl</p>
       </div>
     </div>
 
     <div class="col-md-4">
       <div class="p-4 border rounded-3 h-100 bg-white shadow-sm">
-        <h3 class="h4">Lichteffekte</h3>
-        <p class="text-muted">Effektvolle Beleuchtung für Partys und Veranstaltungen.</p>
+        <h3 class="h4">Dienstleistungen</h3>
+        <p class="text-muted">Unterstützung beim Aufbau und Installation der Technik</p>
       </div>
     </div>
 
     <div class="col-md-4">
       <div class="p-4 border rounded-3 h-100 bg-white shadow-sm">
-        <h3 class="h4">Lichtsteuerung</h3>
-        <p class="text-muted">Steuerung und Kontrolle deiner Lichttechnik.</p>
+        <h3 class="h4">Kontakt</h3>
+        <p class="text-muted"></p>
       </div>
     </div>
   </div>
