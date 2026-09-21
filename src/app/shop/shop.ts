@@ -60,6 +60,11 @@ export class Shop implements OnInit {
     });
   }
 
+  protected readonly dynamischeKategorien = computed<string[]>(() => {
+    const alleKategorien = this.equipmentListe().map((item) => item.category || 'Allgemein');
+    return Array.from(new Set(alleKategorien));
+  });
+
   protected readonly filteredEquipmentListe = computed<Equipment[]>(() => {
     const rawSearch = this.searchTerm().toLowerCase().trim();
     const selectedCategory = this.selectedCategory();
