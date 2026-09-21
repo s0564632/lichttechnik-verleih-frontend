@@ -77,37 +77,34 @@
                   class="dropdown-item d-flex justify-content-between align-items-center rounded-2 py-2"
                   [routerLink]="['/shop']"
                   [queryParams]="{ oberkategorie: gruppe.titel }"
-                  (click)="$event.stopPropagation();"
-                  >
+                  (click)="$event.stopPropagation()"
+                >
                   <span>{{ gruppe.titel }}</span>
-                  <i class="bi bi-chevron-right small text-muted"></i>
+                  <i class="bi bi-chevron-right small text-muted"> </i>
                 </a>
 
-                
-                <h6 class="dropdown-header text-muted px-2 small">{{ gruppe.titel }}</h6>
+                <!-- Unterkategorien klappen nach rechts aus-->
+                <ul class="dropdown-menu submenu shadow rounded-3 p-2">
+                  @for (sub of gruppe.unterpunkte; track sub) {
+                    <li>
+                      <a
+                        class="dropdown-item rounded-2"
+                        [routerLink]="['/shop']"
+                        [queryParams]="{ kategorie: sub }"
+                        (click)="isDropdownOpen.set(false)"
+                      >
+                        {{ sub }}
+                      </a>
+                    </li>
+                  }
+                </ul>
               </li>
-
-              @for (sub of gruppe.unterpunkte; track sub) {
-                <li>
-                  <a
-                    class="dropdown-item rounded-2"
-                    [routerLink]="['/shop']"
-                    [queryParams]="{ kategorie: sub }"
-                    (click)="isDropdownOpen.set(false)"
-                    >{{ sub }}</a
-                  >
-                </li>
-              }
-
-              @if (!last) {
-                <li><hr class="dropdown-divider my-2" /></li>
-              }
             }
           </ul>
         </li>
         <li class="nav-item">
           <a
-            routerLink="/verwaltung"
+            [routerLink]="['/verwaltung']"
             routerLinkActive="active"
             class="nav-link"
             (click)="isDropdownOpen.set(false)"
