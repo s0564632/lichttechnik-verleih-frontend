@@ -5,7 +5,7 @@
 >
   <div class="container">
     <!-- Logo / Titel -->
-    <a routerLink="/" class="navbar-brand fw-bold">Leons Lichttechnik</a>
+    <a routerLink="/" class="navbar-brand fw-bold" (click)="isDropdownOpen.set(false)">Leons Lichttechnik</a>
 
     <button
       class="navbar-toggler"
@@ -23,28 +23,28 @@
       <!-- Menü-Links -->
       <ul class="navbar-nav me-auto mb-2 mb-lg-0">
         <li class="nav-item">
-          <a routerLink="/" routerLinkActive="active" class="nav-link" aria-current="page">Startseite</a>
+          <a routerLink="/" routerLinkActive="active" class="nav-link" aria-current="page"
+            >Startseite</a
+          >
         </li>
 
         <!-- Dropdown-Menü -->
         <li class="nav-item dropdown">
-          <a
+          <button
             class="nav-link dropdown-toggle"
-            href="#"
+            type="button"
             id="produkteDropdown"
-            role="button"
-            data-bs-toggle="dropdown"
-            aria-expanded="false"
+            (click)="isDropdownOpen.set(!isDropdownOpen())"
+            [aria-expanded]="isDropdownOpen()"
           >
             Produkte
-          </a>
+          </button>
           <ul
             class="dropdown-menu p-3 rounded-3 shadow"
-            aria-labelledby="produkteDropdown"
-            style="min-width: 220px; max-height: 400px; overflow-y: auto"
-          >
+            [class.show]="isDropdownOpen()"
+            aria-labelledby="produkteDropdown">
             <li>
-              <a class="dropdown-item fw-semibold rounded-2" routerLink="/shop">Alle Produkte</a>
+              <a class="dropdown-item fw-semibold rounded-2" routerLink="/shop"(click)="isDropdownOpen.set(false)">Alle Produkte</a>
             </li>
             <li><hr class="dropdown-divider my-2" /></li>
             <li><h6 class="dropdown-header fw-bold text-dark px-2">Kategorien</h6></li>
@@ -61,6 +61,7 @@
                     class="dropdown-item rounded-2"
                     [routerLink]="['/shop']"
                     [queryParams]="{ kategorie: sub }"
+                    (click)="isDropdownOpen.set(false)"
                     >{{ sub }}</a
                   >
                 </li>
@@ -73,25 +74,34 @@
           </ul>
         </li>
         <li class="nav-item">
-          <a routerLink="/verwaltung" routerLinkActive="active" class="nav-link">Dienstleistungen</a>
+          <a routerLink="/verwaltung" routerLinkActive="active" class="nav-link"
+            >Dienstleistungen</a
+          >
         </li>
       </ul>
 
       <!-- Suchfeld und Login rechts -->
       <div class="d-flex align-items-center gap-3">
         <div class="position-relative">
-        <label for="site-search" class="visually-hidden">Suche</label>
-        <input
-          id="site-search"
-          class="form-control form-control-sm"
-          type="search"
-          placeholder="Suchen..."
-          aria-label="Search"
-        />
+          <label for="site-search" class="visually-hidden">Suche</label>
+          <input
+            id="site-search"
+            class="form-control form-control-sm"
+            type="search"
+            placeholder="Suchen..."
+            aria-label="Search"
+          />
         </div>
-        
-        <!-- Login-Button -->
-        <i class="bi bi-signal fs-4 text-dark"></i>
+
+        <!-- Signal-Button -->
+         <a
+         href="#kontakt-sektion"
+         class="btn btn-link p-0 text-dark border-0"
+         aria-label="Zum Kontaktbereich scrollen"
+         (click)="isDropdownOpen.set(false)"
+        >
+        <i class="bi bi-signal fs-4"></i>
+        </a>
       </div>
     </div>
   </div>
