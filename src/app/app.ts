@@ -1,4 +1,4 @@
-import { Component, signal, computed, OnInit, inject } from '@angular/core';
+import { Component, signal, Signal, computed, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {
   FormsModule,
@@ -10,18 +10,12 @@ import {
 import { EquipmentService } from './services/equipment';
 import { Equipment } from './interfaces/equipment.interface';
 import { RouterOutlet, RouterLink, RouterLinkActive } from '@angular/router';
+import { Navbar } from './core/components/navbar/navbar';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [
-    CommonModule,
-    FormsModule,
-    ReactiveFormsModule,
-    RouterOutlet,
-    RouterLink,
-    RouterLinkActive,
-  ],
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, RouterOutlet, Navbar],
   templateUrl: './app.html',
   styleUrls: ['./app.css'],
 })
