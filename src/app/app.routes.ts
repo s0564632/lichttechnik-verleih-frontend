@@ -1,12 +1,12 @@
 import { Routes } from '@angular/router';
+import { HomeComponent } from './HomeComponent/home.component';
 import { Verwaltung } from './verwaltung/verwaltung';
 import { Shop } from './shop/shop';
-import { Startseite } from './startseite/startseite';
 
 export const routes: Routes = [
-    { path: '', redirectTo: 'startseite', pathMatch: 'full' },
-    { path: 'shop', component: Shop },
-    { path: 'verwaltung', component: Verwaltung },
-    { path: 'startseite', component: Startseite },
-    { path: '**', redirectTo: 'startseite' }
+  { path: '', redirectTo: 'home', pathMatch: 'full' },
+  { path: 'home', component: HomeComponent },
+  { path: 'shop', component: Shop },
+  { path: 'verwaltung', component: Verwaltung },
+  { path: '**', redirectTo: 'home' },
 ];

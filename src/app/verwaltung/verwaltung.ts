@@ -5,7 +5,7 @@ import {
   ReactiveFormsModule,
   FormBuilder,
   FormGroup,
-  Validators
+  Validators,
 } from '@angular/forms';
 import { EquipmentService } from '../services/equipment';
 import { Equipment } from '../interfaces/equipment.interface';
@@ -42,7 +42,7 @@ export class Verwaltung implements OnInit {
     category: ['', Validators.required],
     priceDay: [0, [Validators.required, Validators.min(0.01)]],
     quantity: [1, [Validators.required, Validators.min(0)]],
-    description: ['']
+    description: [''],
   });
 
   protected readonly editEquipmentForm: FormGroup = this.fb.group({
@@ -50,7 +50,7 @@ export class Verwaltung implements OnInit {
     category: ['', Validators.required],
     priceDay: [0, [Validators.required, Validators.min(0.01)]],
     quantity: [1, [Validators.required, Validators.min(0)]],
-    description: ['']
+    description: [''],
   });
 
   /**
@@ -58,7 +58,7 @@ export class Verwaltung implements OnInit {
    * Leverages computed caching to avoid redundant array transformations on layout repaints.
    */
   protected readonly dynamischeKategorien = computed<string[]>(() => {
-    const alleKategorien = this.equipmentListe().map(item => item.category || 'Allgemein');
+    const alleKategorien = this.equipmentListe().map((item) => item.category || 'Allgemein');
     return [...new Set(alleKategorien)];
   });
 
@@ -76,13 +76,14 @@ export class Verwaltung implements OnInit {
       return dataSet;
     }
 
-    return dataSet.filter(equipment => {
-      const matchesSearch = !rawSearch ||
+    return dataSet.filter((equipment) => {
+      const matchesSearch =
+        !rawSearch ||
         equipment.name.toLowerCase().includes(rawSearch) ||
         (equipment.description || '').toLowerCase().includes(rawSearch);
 
-      const matchesCategory = selectedCategory === 'all' ||
-        (equipment.category || 'Allgemein') === selectedCategory;
+      const matchesCategory =
+        selectedCategory === 'all' || (equipment.category || 'Allgemein') === selectedCategory;
 
       return matchesSearch && matchesCategory;
     });
@@ -111,19 +112,7 @@ export class Verwaltung implements OnInit {
         console.error('[AppCore] Critical API link failure:', error);
         this.errorMessage.set('Verbindung zum Server fehlgeschlagen.');
         this.isLoading.set(false);
-      }
-    });
-  }
-
-  public rentEquipment(id: string): void {
-    this.equipmentService.rentEquipment(id).subscribe({
-      next: (updatedEquipment: Equipment) => {
-        this.equipmentListe.update(items => items.map(item => item._id === updatedEquipment._id ? updatedEquipment : item));
       },
-      error: (error: unknown) => {
-        console.error('[AppCore] Equipment rental failed:', error);
-        this.errorMessage.set('Miete des Equipments fehlgeschlagen.');
-      }
     });
   }
 
@@ -136,7 +125,7 @@ export class Verwaltung implements OnInit {
       category: equipment.category,
       priceDay: equipment.priceDay,
       quantity: equipment.quantity,
-      description: equipment.description
+      description: equipment.description,
     });
     this.showEditModal.set(true);
   }
@@ -159,22 +148,20 @@ export class Verwaltung implements OnInit {
     }
 
     this.equipmentService.deleteEquipment(equipment._id).subscribe({
-
       next: () => {
-        this.equipmentListe.update(items =>
-          items.filter(item => item._id !== equipment._id));
+        this.equipmentListe.update((items) => items.filter((item) => item._id !== equipment._id));
 
-          this.showDeleteModal.set(false);
-          this.selectedEquipment.set(null);
+        this.showDeleteModal.set(false);
+        this.selectedEquipment.set(null);
       },
       error: (error: unknown) => {
         console.error('[AppCore] Equipment deletion failed:', error);
         this.errorMessage.set('Löschen des Equipments fehlgeschlagen.');
-      }
+      },
     });
   }
 
-    public onSubmitEdit(): void {
+  public onSubmitEdit(): void {
     const equipment = this.selectedEquipment();
 
     if (!equipment?._id || this.editEquipmentForm.invalid) {
@@ -183,17 +170,10 @@ export class Verwaltung implements OnInit {
 
     const updatedEquipment = this.editEquipmentForm.value;
 
-    this.equipmentService.updateEquipment(
-      equipment._id,
-      updatedEquipment
-    ).subscribe({
+    this.equipmentService.updateEquipment(equipment._id, updatedEquipment).subscribe({
       next: (updatedItem: Equipment) => {
-        this.equipmentListe.update(items =>
-          items.map(item =>
-            item._id === updatedItem._id
-              ? updatedItem
-              : item
-          )
+        this.equipmentListe.update((items) =>
+          items.map((item) => (item._id === updatedItem._id ? updatedItem : item)),
         );
 
         this.showEditModal.set(false);
@@ -201,16 +181,14 @@ export class Verwaltung implements OnInit {
 
         this.editEquipmentForm.reset({
           priceDay: 0,
-          quantity: 1
+          quantity: 1,
         });
       },
 
       error: (error: unknown) => {
         console.error('[AppCore] Equipment update failed:', error);
-        this.errorMessage.set(
-          'Aktualisierung des Equipments fehlgeschlagen.'
-        );
-      }
+        this.errorMessage.set('Aktualisierung des Equipments fehlgeschlagen.');
+      },
     });
   }
 
@@ -220,13 +198,13 @@ export class Verwaltung implements OnInit {
 
     this.editEquipmentForm.reset({
       priceDay: 0,
-      quantity: 1
+      quantity: 1,
     });
   }
 
   // --- NEU: Handlers für das Create-Formular ---
   public toggleCreateModal(): void {
-    this.showCreateModal.update(val => !val);
+    this.showCreateModal.update((val) => !val);
   }
 
   public onSubmitCreate(): void {
@@ -234,16 +212,15 @@ export class Verwaltung implements OnInit {
       const newEquipment = this.equipmentForm.value;
       this.equipmentService.createEquipment(newEquipment).subscribe({
         next: (createdItem: Equipment) => {
-          this.equipmentListe.update(items => [...items, createdItem]);
+          this.equipmentListe.update((items) => [...items, createdItem]);
           this.equipmentForm.reset({ priceDay: 0, quantity: 1 });
           this.showCreateModal.set(false);
         },
         error: (error: unknown) => {
           console.error('[AppCore] Equipment creation failed:', error);
           this.errorMessage.set('Erstellen des Equipments fehlgeschlagen.');
-        }
+        },
       });
     }
   }
 }
-
