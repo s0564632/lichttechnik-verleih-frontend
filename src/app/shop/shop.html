@@ -47,7 +47,7 @@
             <div class="card-footer bg-transparent border-0 pb-3">
               <button 
                 (click)="rentEquipment(item._id)" 
-                class="btn btn-outline-primary w-100"
+                class="btn btn-outline-primary w-100 fw-bold"
                 [disabled]="item.quantity <= 0">
                 {{ item.quantity > 0 ? 'Jetzt mieten' : 'Ausverkauft' }}
               </button>
