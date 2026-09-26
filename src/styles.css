@@ -1,31 +1,11 @@
-.text-primary {
-  color: #013006 !important;
-}
+@import url("https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap");
 
-.btn-outline-primary {
-  color: #013006 !important;
-  border-color: #013006 !important;
-}
+:root {
+  --bs-body-font-family: 'Roboto', sans-serif;
+  --bs-font-sans-serif: 'Roboto', sans-serif;
 
-.btn-outline-primary:hover {
-  color: #fff !important;
-  background-color: #013006 !important;
-  border-color: #013006 !important;
-}
+  --bs-primary: #EE82EE;
+  --bs-primary-rgb: 238, 130, 238 — a pale pinkish-purple;
 
-.btn-primary {
-  color: #fff !important;
-  background-color: #013006 !important;
-  border-color: #013006 !important;
-}
-
-.btn-primary:hover {
-  color: #fff !important;
-  background-color: #013006 !important;
-  border-color: #013006 !important;
-}
-
-.form-control:focus {
-  border-color: #013006 !important;
-  box-shadow: 0 0 0 0.2rem rgba(1, 48, 6, 0.25) !important;
+  --bs-btn-hover-bg: #360243;
 }

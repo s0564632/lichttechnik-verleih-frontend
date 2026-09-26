@@ -10,6 +10,7 @@ import { RouterLink, RouterLinkActive } from '@angular/router';
 })
 export class Navbar {
   isDropdownOpen = signal(false);
+  aktiveKategorie = signal<string | null>(null);
 
   kategorieGruppen = [
     {
@@ -35,6 +36,24 @@ export class Navbar {
     {
       titel: 'Laser',
       unterpunkte: ['Showlaser'],
+    },
+    {
+      titel: 'Dimmer & Strom',
+      unterpunkte: ['Dimmer', 'Netzteile', 'Stromverteilung'],
+    },
+    {
+      titel: 'Kabel & Adapter',
+      unterpunkte: [
+        'DMX-Signalverteilung',
+        'DMX-Kabel',
+        'Stromkabel',
+        'Verlängerungskabel',
+        'DMX-Adapter',
+      ],
+    },
+    {
+      titel: 'Zubehör',
+      unterpunkte: ['Projektion', 'Event-Zubehör', 'LED-/Pixel-Zubehör'],
     },
   ];
 }
