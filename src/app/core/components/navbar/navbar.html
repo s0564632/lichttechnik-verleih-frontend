@@ -2,10 +2,14 @@
 <nav
   class="navbar navbar-expand-lg bg-body-tertiary border-bottom mb-4"
   aria-label="Hauptnavigation"
+  (document:click)="onDocumentClick()"
+  (document:keydown.escape)="schliesseDropdown()"
 >
   <div class="container">
     <!-- Logo / Titel -->
-    <a routerLink="/" class="navbar-brand fw-bold" (click)="isDropdownOpen.set(false)">Leons Lichttechnik</a>
+    <a routerLink="/" class="navbar-brand fw-bold" (click)="isDropdownOpen.set(false)"
+      >Leons Lichttechnik</a
+    >
 
     <button
       class="navbar-toggler"
@@ -23,7 +27,12 @@
       <!-- Menü-Links -->
       <ul class="navbar-nav me-auto mb-2 mb-lg-0">
         <li class="nav-item">
-          <a routerLink="/" routerLinkActive="active" class="nav-link" aria-current="page" (click)="isDropdownOpen.set(false)"
+          <a
+            routerLink="/"
+            routerLinkActive="active"
+            class="nav-link"
+            aria-current="page"
+            (click)="isDropdownOpen.set(false)"
             >Startseite</a
           >
         </li>
@@ -34,7 +43,7 @@
             class="nav-link dropdown-toggle"
             type="button"
             id="produkteDropdown"
-            (click)="isDropdownOpen.set(!isDropdownOpen())"
+            (click)="toogleDropdown(); $event.stopPropagation()"
             [aria-expanded]="isDropdownOpen()"
           >
             Produkte
@@ -42,30 +51,50 @@
           <ul
             class="dropdown-menu p-3 rounded-3 shadow"
             [class.show]="isDropdownOpen()"
-            aria-labelledby="produkteDropdown">
+            aria-labelledby="produkteDropdown"
+          >
             <li>
-              <a class="dropdown-item fw-semibold rounded-2" routerLink="/shop"(click)="isDropdownOpen.set(false)">Alle Produkte</a>
+              <a
+                class="dropdown-item fw-semibold rounded-2"
+                routerLink="/shop"
+                (click)="schliesseDropdown()"
+                >Alle Produkte</a
+              >
             </li>
             <li><hr class="dropdown-divider my-2" /></li>
             <li><h6 class="dropdown-header fw-bold text-dark px-2">Kategorien</h6></li>
             <li><hr class="dropdown-divider my-2" /></li>
 
             @for (gruppe of kategorieGruppen; track gruppe.titel; let last = $last) {
-              <li>
-                <h6 class="dropdown-header text-muted px-2 small">{{ gruppe.titel }}</h6>
-              </li>
+              <li
+                class="flyout-group-item"
+                (mouseenter)="zeigeKategorie(gruppe.titel)"
+                (mouseleave)="aktiveKategorie.set(null)"
+              >
+                <a
+                  class="dropdown-item fw-semibold rounded-2"
+                  [class.is-active]="aktiveKategorie() === gruppe.titel"
+                >
+                  <span>{{ gruppe.titel }}</span>
+                  <span class="flyout-arrow"> </span>
+                </a>
 
-              @for (sub of gruppe.unterpunkte; track sub) {
-                <li>
-                  <a
-                    class="dropdown-item rounded-2"
-                    [routerLink]="['/shop']"
-                    [queryParams]="{ kategorie: sub }"
-                    (click)="isDropdownOpen.set(false)"
-                    >{{ sub }}</a
-                  >
-                </li>
-              }
+                @if (aktiveKategorie() === gruppe.titel) {
+                  <ul class="list-unstyled shadow rounded-3 p-2 bg-body-tertiary border flyout-right-menu">
+                    @for (sub of gruppe.unterpunkte; track sub) {
+                      <li>
+                        <a
+                          class="dropdown-item rounded-2 py-1.5"
+                          [routerLink]="['/shop']"
+                          [queryParams]="{ kategorie: sub }"
+                          (click)="schliesseDropdown()"
+                          >{{ sub }}
+                          </a>
+                      </li>
+                    }
+                  </ul>
+                }
+              </li>
 
               @if (!last) {
                 <li><hr class="dropdown-divider my-2" /></li>
@@ -74,12 +103,15 @@
           </ul>
         </li>
         <li class="nav-item">
-          <a routerLink="/verwaltung" routerLinkActive="active" class="nav-link" (click)="isDropdownOpen.set(false)"
+          <a
+            href="#kontakt-sektion"
+            class="nav-link"
+            (click)="schliesseDropdown()"
             >Dienstleistungen</a
           >
         </li>
       </ul>
-
+  
       <!-- Suchfeld und Icons rechts -->
       <div class="d-flex align-items-center gap-3">
         <div class="position-relative">
@@ -94,13 +126,13 @@
         </div>
 
         <!-- Signal-Button -->
-         <a
-         href="#kontakt-sektion"
-         class="btn btn-link p-0 text-dark border-0"
-         aria-label="Zum Kontaktbereich scrollen"
-         (click)="isDropdownOpen.set(false)"
+        <a
+          href="#kontakt-sektion"
+          class="btn btn-link p-0 text-dark border-0"
+          aria-label="Zum Kontaktbereich scrollen"
+          (click)="isDropdownOpen.set(false)"
         >
-        <i class="bi bi-signal fs-4"></i>
+          <i class="bi bi-signal fs-4"></i>
         </a>
       </div>
     </div>

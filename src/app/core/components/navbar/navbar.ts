@@ -56,4 +56,26 @@ export class Navbar {
       unterpunkte: ['Projektion', 'Event-Zubehör', 'LED-/Pixel-Zubehör'],
     },
   ];
+
+  toogleDropdown(): void {
+    const shouldOpen = !this.isDropdownOpen();
+    this.isDropdownOpen.set(shouldOpen);
+
+    if (!shouldOpen) {
+      this.aktiveKategorie.set(null);
+    }
+  }
+
+  zeigeKategorie(kategorie: string): void {
+    this.aktiveKategorie.set(kategorie);
+  }
+
+  schliesseDropdown(): void {
+    this.isDropdownOpen.set(false);
+    this.aktiveKategorie.set(null);
+  }
+
+  onDocumentClick(): void {
+    this.schliesseDropdown();
+  }
 }
