@@ -54,14 +54,14 @@
 .kategorien div {
   padding: 2rem;
   border-radius: 0.75rem;
-  background: #f3f4f6;
+  background: #d42ac1;
   text-align: center;
 }
 
 .cta {
   padding: 5rem 2rem;
   text-align: center;
-  background: #e5e7eb;
+  background: #0a9c61;
 }
 
 .cta p {
