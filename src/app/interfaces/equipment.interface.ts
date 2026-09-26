@@ -2,6 +2,7 @@ export interface Equipment {
   _id: string;
   name: string;
   category: string;
+  subCategory: string;
   quantity: number;
   priceDay: number;
   description: string;
