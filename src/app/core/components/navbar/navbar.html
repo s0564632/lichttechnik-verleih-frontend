@@ -1,6 +1,6 @@
 <!-- Navbar-Bereich -->
 <nav
-  class="navbar navbar-expand-lg bg-body-tertiary border-bottom mb-4"
+  class="navbar navbar-expand-lg bg-navbar-pink border-bottom mb-4"
   aria-label="Hauptnavigation"
   (document:click)="onDocumentClick()"
   (document:keydown.escape)="schliesseDropdown()"
@@ -49,7 +49,7 @@
             Produkte
           </button>
           <ul
-            class="dropdown-menu navbar-category-menup-3 rounded-3 shadow"
+            class="dropdown-menu navbar-category-menu p-3 rounded-3 shadow"
             [class.show]="isDropdownOpen()"
             aria-labelledby="produkteDropdown"
           >
