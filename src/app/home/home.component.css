@@ -4,25 +4,22 @@
 }
 
 .hero {
-  padding: 6rem 2rem;
   text-align: center;
-  background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('../../assets/Fusion2016HintergrundBild.jpg');
+  background-image:
+    linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)),
+    url('../../assets/Fusion2016HintergrundBild.jpg');
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
   color: white;
 }
 
-.hero h1 {
-  font-size: 3rem;
-  margin-bottom: 1rem;
-}
-
 .hero p {
   max-width: 650px;
   margin: 0 auto 2rem;
-  font-size: 1.2rem;
+  font-size: 1.5rem;
   line-height: 1.6;
+  font-weight: 500;
 }
 
 .hero a,
@@ -55,15 +52,31 @@
   padding: 2rem;
   border-radius: 0.75rem;
   background: #d42ac1;
+  color: white;
   text-align: center;
 }
 
 .cta {
   padding: 5rem 2rem;
   text-align: center;
-  background: #0a9c61;
+  background: #9c0a6e;
+  color: white;
 }
 
 .cta p {
   margin-bottom: 2rem;
+}
+
+.kategorien-bereich {
+  background-color: #8f174f;
+}
+
+.kategorie-karte {
+  background-color: #205850;
+  color: white;
+}
+
+.cta-bereich {
+  background-color: #f562a9;
+  color: white;
 }
