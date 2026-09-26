@@ -7,7 +7,7 @@ import { Equipment } from '../interfaces/equipment.interface';
   providedIn: 'root'
 })
 export class EquipmentService {
-  private apiUrl = 'http://localhost:3000/api/equipment';
+  private apiUrl = '/api/equipment';
 
   constructor(private http: HttpClient) {}
 
