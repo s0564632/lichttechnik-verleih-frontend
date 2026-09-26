@@ -1,11 +1,11 @@
 <!-- Navbar-Bereich -->
 <nav
-  class="navbar navbar-expand-lg bg-body-tertiary border-bottom mb-4"
+  class="navbar navbar-expand-lg bg-navbar-pink border-bottom mb-4"
   aria-label="Hauptnavigation"
 >
   <div class="container">
     <!-- Logo / Titel -->
-    <a routerLink="/" class="navbar-brand fw-bold" (click)="isDropdownOpen.set(false)">Leons Lichttechnik</a>
+    <a routerLink="/" class="navbar-brand fw-bold" (click)="closeMenu()">Leons Lichttechnik</a>
 
     <button
       class="navbar-toggler"
@@ -22,61 +22,51 @@
     <div class="collapse navbar-collapse" id="navbarNav">
       <!-- Menü-Links -->
       <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-        <li class="nav-item">
-          <a routerLink="/" routerLinkActive="active" class="nav-link" aria-current="page" (click)="isDropdownOpen.set(false)"
-            >Startseite</a
-          >
-        </li>
+        <li class="nav-item"><a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }" class="nav-link" ariaCurrentWhenActive="page" (click)="closeMenu()">Startseite</a></li>
 
-        <!-- Dropdown-Menü -->
-        <li class="nav-item dropdown">
+        <!-- Zweistufiges Flyout-Menü -->
+        <li class="nav-item navbar-flyout">
           <button
-            class="nav-link dropdown-toggle"
+            class="navbar-category-button"
             type="button"
             id="produkteDropdown"
-            (click)="isDropdownOpen.set(!isDropdownOpen())"
-            [aria-expanded]="isDropdownOpen()"
+            (click)="toggleHauptmenue()"
+            [class.active]="isDropdownOpen()"
+            [attr.aria-expanded]="isDropdownOpen()"
+            aria-haspopup="true"
           >
-            Produkte
+            Produkte <span class="category-arrow" aria-hidden="true">›</span>
           </button>
-          <ul
-            class="dropdown-menu p-3 rounded-3 shadow"
-            [class.show]="isDropdownOpen()"
-            aria-labelledby="produkteDropdown">
-            <li>
-              <a class="dropdown-item fw-semibold rounded-2" routerLink="/shop"(click)="isDropdownOpen.set(false)">Alle Produkte</a>
-            </li>
-            <li><hr class="dropdown-divider my-2" /></li>
-            <li><h6 class="dropdown-header fw-bold text-dark px-2">Kategorien</h6></li>
-            <li><hr class="dropdown-divider my-2" /></li>
 
-            @for (gruppe of kategorieGruppen; track gruppe.titel; let last = $last) {
-              <li>
-                <h6 class="dropdown-header text-muted px-2 small">{{ gruppe.titel }}</h6>
-              </li>
+          @if (isDropdownOpen()) {
+            <ul class="navbar-category-menu" aria-labelledby="produkteDropdown">
+              <li><a class="dropdown-item fw-semibold rounded-2" routerLink="/shop" (click)="closeMenu()">Alle Produkte</a></li>
+              <li><hr class="dropdown-divider my-2" /></li>
 
-              @for (sub of gruppe.unterpunkte; track sub) {
-                <li>
-                  <a
-                    class="dropdown-item rounded-2"
-                    [routerLink]="['/shop']"
-                    [queryParams]="{ kategorie: sub }"
-                    (click)="isDropdownOpen.set(false)"
-                    >{{ sub }}</a
+              @for (gruppe of kategorieGruppen; track gruppe.titel) {
+                <li class="navbar-category-item">
+                  <button
+                    class="navbar-category-button"
+                    type="button"
+                    [class.active]="offeneGruppe() === gruppe.titel"
+                    [attr.aria-expanded]="offeneGruppe() === gruppe.titel"
+                    aria-haspopup="true"
+                    (click)="toggleGruppe(gruppe.titel)"
                   >
+                    {{ gruppe.titel }} <span class="category-arrow" aria-hidden="true">›</span>
+                  </button>
+
+                  @if (offeneGruppe() === gruppe.titel) {
+                    <ul class="navbar-submenu">
+                      @for (sub of gruppe.unterpunkte; track sub) {
+                        <li><a class="dropdown-item rounded-2" [routerLink]="['/shop']" [queryParams]="{ kategorie: sub }" (click)="closeMenu()">{{ sub }}</a></li>
+                      }
+                    </ul>
+                  }
                 </li>
               }
-
-              @if (!last) {
-                <li><hr class="dropdown-divider my-2" /></li>
-              }
-            }
-          </ul>
-        </li>
-        <li class="nav-item">
-          <a routerLink="/verwaltung" routerLinkActive="active" class="nav-link" (click)="isDropdownOpen.set(false)"
-            >Dienstleistungen</a
-          >
+            </ul>
+          }
         </li>
       </ul>
 
@@ -89,18 +79,13 @@
             class="form-control form-control-sm"
             type="search"
             placeholder="Suchen..."
-            aria-label="Search"
+            aria-label="Suche"
           />
         </div>
 
         <!-- Signal-Button -->
-         <a
-         href="#kontakt-sektion"
-         class="btn btn-link p-0 text-dark border-0"
-         aria-label="Zum Kontaktbereich scrollen"
-         (click)="isDropdownOpen.set(false)"
-        >
-        <i class="bi bi-signal fs-4"></i>
+        <a routerLink="/home" fragment="kontakt-sektion" class="btn btn-link p-0 text-white border-0" aria-label="Zum Kontaktbereich scrollen" (click)="closeMenu()">
+          <i class="bi bi-signal fs-4"></i>
         </a>
       </div>
     </div>
