@@ -9,6 +9,7 @@ import {
 } from '@angular/forms';
 import { EquipmentService } from '../services/equipment';
 import { Equipment } from '../interfaces/equipment.interface';
+import { finalize } from 'rxjs';
 
 @Component({
   selector: 'app-verwaltung',
@@ -24,7 +25,11 @@ export class Verwaltung implements OnInit {
 
   protected readonly equipmentListe = signal<Equipment[]>([]);
   protected readonly isLoading = signal<boolean>(true);
-  protected readonly errorMessage = signal<string | null>(null);
+
+  protected readonly loadError = signal<string | null>(null);
+  protected readonly actionError = signal<string | null>(null);
+
+  protected readonly isSaving = signal<boolean>(false);
 
   protected readonly searchTerm = signal<string>('');
   protected readonly selectedCategory = signal<string>('all');
@@ -94,12 +99,11 @@ export class Verwaltung implements OnInit {
 
   /**
    * Lädt den aktuellen Equipment-Bestand vom Backend.
-   * Hinweis: Ein explizites unsubscribe() ist hier nicht nötig, da HttpClient-Observables
-   * nach der ersten Antwort automatisch abgeschlossen werden.
+   * 
    */
   private fetchEquipmentInventory(): void {
     this.isLoading.set(true);
-    this.errorMessage.set(null);
+    this.loadError.set(null);
 
     this.equipmentService.getEquipment().subscribe({
       next: (data: Equipment[]) => {
@@ -108,7 +112,7 @@ export class Verwaltung implements OnInit {
       },
       error: (error: unknown) => {
         console.error('[Verwaltung] Fehler beim Laden des Inventars:', error);
-        this.errorMessage.set('Verbindung zum Server fehlgeschlagen.');
+        this.loadError.set('Verbindung zum Server fehlgeschlagen.');
         this.isLoading.set(false);
       },
     });
@@ -134,31 +138,35 @@ export class Verwaltung implements OnInit {
   public onSubmitEdit(): void {
     const equipment = this.selectedEquipment();
 
-    if (!equipment?._id || this.editEquipmentForm.invalid) {
+    if (!equipment?._id || this.editEquipmentForm.invalid || this.isSaving()) {
       return;
     }
 
+    this.isSaving.set(true);
     const updatedEquipment: Equipment = this.editEquipmentForm.value;
 
-    this.equipmentService.updateEquipment(equipment._id, updatedEquipment).subscribe({
-      next: (updatedItem: Equipment) => {
-        this.equipmentListe.update((items) =>
-          items.map((item) => (item._id === updatedItem._id ? updatedItem : item)),
-        );
+    this.equipmentService.updateEquipment(equipment._id, updatedEquipment)
+      .pipe(finalize(() => this.isSaving.set(false)))
+      .subscribe({
+        next: (updatedItem: Equipment) => {
+          this.equipmentListe.update((items) =>
+            items.map((item) => (item._id === updatedItem._id ? updatedItem : item)),
+          );
 
-        this.showEditModal.set(false);
-        this.selectedEquipment.set(null);
+          this.showEditModal.set(false);
+          this.selectedEquipment.set(null);
+          this.actionError.set(null);
 
-        this.editEquipmentForm.reset({
-          priceDay: 0,
-          quantity: 1,
-        });
-      },
-      error: (error: unknown) => {
-        console.error('[Verwaltung] Aktualisierung fehlgeschlagen:', error);
-        this.errorMessage.set('Aktualisierung des Equipments fehlgeschlagen.');
-      },
-    });
+          this.editEquipmentForm.reset({
+            priceDay: 0,
+            quantity: 1,
+          });
+        },
+        error: (error: unknown) => {
+          console.error('[Verwaltung] Aktualisierung fehlgeschlagen:', error);
+          this.actionError.set('Aktualisierung des Equipments fehlgeschlagen.');
+        },
+      });
   }
 
   public closeEditModal(): void {
@@ -186,26 +194,30 @@ export class Verwaltung implements OnInit {
   public onConfirmDelete(): void {
     const equipment = this.selectedEquipment();
 
-    if (!equipment?._id) {
+    if (!equipment?._id || this.isSaving()) {
       return;
     }
 
-    this.equipmentService.deleteEquipment(equipment._id).subscribe({
-      next: () => {
-        this.equipmentListe.update((items) => items.filter((item) => item._id !== equipment._id));
+    this.isSaving.set(true);
 
-        this.showDeleteModal.set(false);
-        this.selectedEquipment.set(null);
-      },
-      error: (error: unknown) => {
-        console.error('[Verwaltung] Löschen fehlgeschlagen:', error);
-        this.errorMessage.set('Löschen des Equipments fehlgeschlagen.');
-      },
-    });
+    this.equipmentService.deleteEquipment(equipment._id)
+      .pipe(finalize(() => this.isSaving.set(false)))
+      .subscribe({
+        next: () => {
+          this.equipmentListe.update((items) => items.filter((item) => item._id !== equipment._id));
+
+          this.showDeleteModal.set(false);
+          this.selectedEquipment.set(null);
+          this.actionError.set(null);
+        },
+        error: (error: unknown) => {
+          console.error('[Verwaltung] Löschen fehlgeschlagen:', error);
+          this.actionError.set('Löschen des Equipments fehlgeschlagen.');
+        },
+      });
   }
 
   // --- Erstellen ---
-
   public toggleCreateModal(): void {
     this.showCreateModal.update((wert) => !wert);
 
@@ -229,7 +241,7 @@ export class Verwaltung implements OnInit {
       },
       error: (error: unknown) => {
         console.error('[Verwaltung] Erstellen fehlgeschlagen:', error);
-        this.errorMessage.set('Erstellen des Equipments fehlgeschlagen.');
+        this.actionError.set('Erstellen des Equipments fehlgeschlagen.');
       },
     });
   }

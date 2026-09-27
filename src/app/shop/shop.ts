@@ -2,7 +2,7 @@ import { Component, OnInit, inject, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute } from '@angular/router';
 import { toSignal } from '@angular/core/rxjs-interop';
-import { map } from 'rxjs';
+import { map, finalize } from 'rxjs';
 import { EquipmentService } from '../services/equipment';
 import { Equipment } from '../interfaces/equipment.interface';
 
@@ -19,10 +19,15 @@ export class Shop implements OnInit {
 
   protected readonly equipmentListe = signal<Equipment[]>([]);
   protected readonly isLoading = signal<boolean>(true);
-  protected readonly errorMessage = signal<string | null>(null);
 
-  protected readonly searchTerm = toSignal(this.route.queryParamMap.pipe(map((params) => params.get('suche') ?? '')),
-    {initialValue: ''},
+  protected readonly loadError = signal<string | null>(null);
+  protected readonly actionError = signal<string | null>(null);
+
+  protected readonly isSaving = signal<boolean>(false);
+
+  protected readonly searchTerm = toSignal(
+    this.route.queryParamMap.pipe(map((params) => params.get('suche') ?? '')),
+    { initialValue: '' },
   );
 
   protected readonly selectedCategory = toSignal(
@@ -58,7 +63,7 @@ export class Shop implements OnInit {
 
   private fetchEquipmentInventory(): void {
     this.isLoading.set(true);
-    this.errorMessage.set(null);
+    this.loadError.set(null);
 
     this.equipmentService.getEquipment().subscribe({
       next: (data: Equipment[]) => {
@@ -67,23 +72,33 @@ export class Shop implements OnInit {
       },
       error: (error: unknown) => {
         console.error('[ShopCore] Fehler beim Laden des Inventars:', error);
-        this.errorMessage.set('Verbindung zum Server fehlgeschlagen.');
+        this.loadError.set('Verbindung zum Server fehlgeschlagen.');
         this.isLoading.set(false);
       },
     });
   }
 
   public rentEquipment(id: string): void {
-    this.equipmentService.rentEquipment(id).subscribe({
-      next: (updatedEquipment: Equipment) => {
-        this.equipmentListe.update((items: Equipment[]) =>
-          items.map((item) => (item._id === updatedEquipment._id ? updatedEquipment : item)),
-        );
-      },
-      error: (error: unknown) => {
-        console.error('[ShopCore] Miete fehlgeschlagen:', error);
-        this.errorMessage.set('Miete des Produkts fehlgeschlagen.');
-      },
-    });
+    if (this.isSaving()) {
+      return;
+    }
+
+    this.isSaving.set(true);
+
+    this.equipmentService
+      .rentEquipment(id)
+      .pipe(finalize(() => this.isSaving.set(false)))
+      .subscribe({
+        next: (updatedEquipment: Equipment) => {
+          this.equipmentListe.update((items: Equipment[]) =>
+            items.map((item) => (item._id === updatedEquipment._id ? updatedEquipment : item)),
+          );
+          this.actionError.set(null);
+        },
+        error: (error: unknown) => {
+          console.error('[ShopCore] Miete fehlgeschlagen:', error);
+          this.actionError.set('Miete des Produkts fehlgeschlagen.');
+        },
+      });
   }
 }
