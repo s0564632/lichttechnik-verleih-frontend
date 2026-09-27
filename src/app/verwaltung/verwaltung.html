@@ -17,14 +17,26 @@
   }
 
   <!-- Fehlerzustand: Anzeige bei fehlgeschlagenem Backend-Aufruf -->
-  @if (errorMessage()) {
+  @if (loadError()) {
     <div class="alert alert-danger shadow-sm" role="alert">
-      {{ errorMessage() }}
+      {{ loadError() }}
     </div>
   }
 
-  <!-- Hauptbereich mit Suche, Filter und Equipment-Liste -->
-  @if (!isLoading() && !errorMessage()) {
+  <!-- Hauptbereich bleibt sichtbar, wenn kein schwerer Ladefehler entsteht -->
+  @if (!loadError()) {
+    @if (actionError()) {
+      <div class="alert alert-warning alert-dismissble fade show" role="alert">
+        {{ actionError() }}
+        <button
+          type="button"
+          class="btn-close"
+          aria-label="Schließen"
+          (click)="actionError.set(null)"
+        ></button>
+      </div>
+    }
+
     <!-- Filterleiste: Suche und Kategorie, beide an Signale gebunden -->
     <div class="row g-3 mb-4 p-3 bg-light rounded shadow-sm">
       <div class="col-md-8">
@@ -233,7 +245,6 @@
         <div class="modal-content">
           <div class="modal-header">
             <h5 class="modal-title">Equipment bearbeiten</h5>
-
             <button
               type="button"
               class="btn-close"
@@ -246,9 +257,7 @@
             <div class="modal-body">
               <div class="mb-3">
                 <label for="edit-name" class="form-label"> Name </label>
-
                 <input id="edit-name" type="text" class="form-control" formControlName="name" />
-
                 @if (
                   editEquipmentForm.get('name')?.invalid && editEquipmentForm.get('name')?.touched
                 ) {
@@ -260,7 +269,6 @@
 
               <div class="mb-3">
                 <label for="edit-category" class="form-label"> Kategorie </label>
-
                 <input
                   id="edit-category"
                   type="text"
@@ -271,7 +279,6 @@
 
               <div class="mb-3">
                 <label for="edit-subCategory" class="form-label"> Unterkategorie </label>
-
                 <input
                   id="edit-subCategory"
                   type="text"
@@ -283,7 +290,6 @@
               <div class="row">
                 <div class="col-md-6 mb-3">
                   <label for="edit-priceDay" class="form-label"> Preis pro Tag (€) </label>
-
                   <input
                     id="edit-priceDay"
                     type="number"
@@ -296,7 +302,6 @@
 
                 <div class="col-md-6 mb-3">
                   <label for="edit-quantity" class="form-label"> Anzahl </label>
-
                   <input
                     id="edit-quantity"
                     type="number"
@@ -309,14 +314,12 @@
 
               <div class="mb-3">
                 <label for="edit-description" class="form-label"> Beschreibung </label>
-
                 <textarea
                   id="edit-description"
                   class="form-control"
                   rows="4"
                   formControlName="description"
-                >
-                </textarea>
+                ></textarea>
               </div>
             </div>
 
@@ -324,16 +327,18 @@
               <button type="button" class="btn btn-secondary" (click)="closeEditModal()">
                 Abbrechen
               </button>
-
-              <button type="submit" class="btn btn-primary" [disabled]="editEquipmentForm.invalid">
-                Änderungen speichern
+              <button
+                type="submit"
+                class="btn btn-primary"
+                [disabled]="editEquipmentForm.invalid || isSaving()"
+              >
+                {{ isSaving() ? 'Wird gespeichert...' : 'Änderungen speichern' }}
               </button>
             </div>
           </form>
         </div>
       </div>
     </div>
-
     <div class="modal-backdrop fade show"></div>
   }
 
@@ -344,7 +349,6 @@
         <div class="modal-content">
           <div class="modal-header">
             <h5 class="modal-title">Equipment löschen</h5>
-
             <button
               type="button"
               class="btn-close"
@@ -355,12 +359,9 @@
 
           <div class="modal-body">
             <p>Sind Sie sicher, dass Sie das Equipment löschen möchten?</p>
-
             @if (selectedEquipment()) {
               <p>
-                <strong>
-                  {{ selectedEquipment()?.name }}
-                </strong>
+                <strong>{{ selectedEquipment()?.name }}</strong>
               </p>
             }
             <p class="text-danger small mb-0">Diese Aktion kann nicht rückgängig gemacht werden.</p>
@@ -370,15 +371,18 @@
             <button type="button" class="btn btn-secondary" (click)="closeDeleteModal()">
               Abbrechen
             </button>
-
-            <button type="button" class="btn btn-danger" (click)="onConfirmDelete()">
-              Löschen
+            <button
+              type="button"
+              class="btn btn-danger"
+              [disabled]="isSaving()"
+              (click)="onConfirmDelete()"
+            >
+              {{ isSaving() ? 'Wird gelöscht...' : 'Löschen' }}
             </button>
           </div>
         </div>
       </div>
     </div>
-
     <div class="modal-backdrop fade show"></div>
   }
 </div>
