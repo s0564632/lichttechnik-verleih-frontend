@@ -21,7 +21,9 @@ export class Shop implements OnInit {
   protected readonly isLoading = signal<boolean>(true);
   protected readonly errorMessage = signal<string | null>(null);
 
-  protected readonly searchTerm = signal<string>('');
+  protected readonly searchTerm = toSignal(this.route.queryParamMap.pipe(map((params) => params.get('suche') ?? '')),
+    {initialValue: ''},
+  );
 
   protected readonly selectedCategory = toSignal(
     this.route.queryParamMap.pipe(map((params) => params.get('kategorie') ?? 'all')),
