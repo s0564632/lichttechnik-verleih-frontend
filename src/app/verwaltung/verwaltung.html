@@ -26,7 +26,7 @@
   <!-- Hauptbereich bleibt sichtbar, wenn kein schwerer Ladefehler entsteht -->
   @if (!loadError()) {
     @if (actionError()) {
-      <div class="alert alert-warning alert-dismissble fade show" role="alert">
+      <div class="alert alert-warning alert-dismissible fade show" role="alert">
         {{ actionError() }}
         <button
           type="button"
@@ -103,7 +103,7 @@
                 </span>
               </div>
 
-              <div class="d-grid gab-2">
+              <div class="d-grid gap-2">
                 <button
                   type="button"
                   class="btn btn-outline-secondary"
@@ -226,8 +226,12 @@
                 Abbrechen
               </button>
 
-              <button type="submit" class="btn btn-primary" [disabled]="equipmentForm.invalid">
-                Anlegen
+              <button
+                type="submit"
+                class="btn btn-primary"
+                [disabled]="equipmentForm.invalid || isSaving()"
+              >
+                {{ isSaving() ? 'Wird angelegt...' : 'Anlegen' }}
               </button>
             </div>
           </form>
