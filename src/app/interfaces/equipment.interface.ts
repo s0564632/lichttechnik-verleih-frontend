@@ -12,3 +12,5 @@ export interface Equipment {
   createdAt?: string;
   updatedAt?: string;
 }
+
+export type EquipmentInput = Omit<Equipment, '_id' | '__v' | 'createdAt' | 'updatedAt'>;

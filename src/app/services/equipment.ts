@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { Equipment } from '../interfaces/equipment.interface';
+import { Equipment, EquipmentInput } from '../interfaces/equipment.interface';
 
 @Injectable({
   providedIn: 'root'
@@ -19,11 +19,11 @@ export class EquipmentService {
     return this.http.patch<Equipment>(`${this.apiUrl}/${id}/rent`, {});
   } 
 
-  createEquipment(equipment: Equipment): Observable<Equipment> {
+  createEquipment(equipment: EquipmentInput): Observable<Equipment> {
     return this.http.post<Equipment>(this.apiUrl, equipment);
   }
 
-  updateEquipment(id: string, equipment: Equipment): Observable<Equipment> {
+  updateEquipment(id: string, equipment: EquipmentInput): Observable<Equipment> {
     return this.http.put<Equipment>(`${this.apiUrl}/${id}`, equipment);
   }
 
