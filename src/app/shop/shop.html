@@ -1,18 +1,5 @@
 <div class="container my-4">
   
-  <div class="row mb-4">
-    <div class="col-md-6 mx-auto">
-      <input 
-        #suchFeld
-        type="text" 
-        [value]="searchTerm()" 
-        (input)="searchTerm.set(suchFeld.value)" 
-        placeholder="Produkte nach Name oder Beschreibung suchen..." 
-        class="form-control"
-      />
-    </div>
-  </div>
-
   @if (isLoading()) {
     <div class="text-center my-5">
       <div class="spinner-border text-primary" role="status"></div>

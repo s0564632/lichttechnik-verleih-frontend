@@ -1,8 +1,5 @@
 <!-- Navbar-Bereich -->
-<nav
-  class="navbar navbar-expand-lg bg-navbar-pink border-bottom mb-4"
-  aria-label="Hauptnavigation"
->
+<nav class="navbar navbar-expand-lg bg-navbar-pink border-bottom mb-4" aria-label="Hauptnavigation">
   <div class="container">
     <!-- Logo / Titel -->
     <a routerLink="/" class="navbar-brand fw-bold" (click)="closeMenu()">Leons Lichttechnik</a>
@@ -22,7 +19,17 @@
     <div class="collapse navbar-collapse" id="navbarNav">
       <!-- Menü-Links -->
       <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-        <li class="nav-item"><a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }" class="nav-link" ariaCurrentWhenActive="page" (click)="closeMenu()">Startseite</a></li>
+        <li class="nav-item">
+          <a
+            routerLink="/"
+            routerLinkActive="active"
+            [routerLinkActiveOptions]="{ exact: true }"
+            class="nav-link"
+            ariaCurrentWhenActive="page"
+            (click)="closeMenu()"
+            >Startseite</a
+          >
+        </li>
 
         <!-- Zweistufiges Flyout-Menü -->
         <li class="nav-item navbar-flyout">
@@ -40,7 +47,14 @@
 
           @if (isDropdownOpen()) {
             <ul class="navbar-category-menu" aria-labelledby="produkteDropdown">
-              <li><a class="dropdown-item fw-semibold rounded-2" routerLink="/shop" (click)="closeMenu()">Alle Produkte</a></li>
+              <li>
+                <a
+                  class="dropdown-item fw-semibold rounded-2"
+                  routerLink="/shop"
+                  (click)="closeMenu()"
+                  >Alle Produkte</a
+                >
+              </li>
               <li><hr class="dropdown-divider my-2" /></li>
 
               @for (gruppe of kategorieGruppen; track gruppe.titel) {
@@ -59,7 +73,15 @@
                   @if (offeneGruppe() === gruppe.titel) {
                     <ul class="navbar-submenu">
                       @for (sub of gruppe.unterpunkte; track sub) {
-                        <li><a class="dropdown-item rounded-2" [routerLink]="['/shop']" [queryParams]="{ kategorie: sub }" (click)="closeMenu()">{{ sub }}</a></li>
+                        <li>
+                          <a
+                            class="dropdown-item rounded-2"
+                            [routerLink]="['/shop']"
+                            [queryParams]="{ kategorie: sub }"
+                            (click)="closeMenu()"
+                            >{{ sub }}</a
+                          >
+                        </li>
                       }
                     </ul>
                   }
@@ -75,16 +97,24 @@
         <div class="position-relative">
           <label for="site-search" class="visually-hidden">Suche</label>
           <input
+            #suchFeld
             id="site-search"
             class="form-control form-control-sm"
             type="search"
             placeholder="Suchen..."
             aria-label="Suche"
+            (keyup.enter)="search(suchFeld.value)"
           />
         </div>
 
         <!-- Signal-Button -->
-        <a routerLink="/home" fragment="kontakt-section" class="btn btn-link p-0 text-white border-0" aria-label="Zum Kontaktbereich scrollen" (click)="closeMenu()">
+        <a
+          routerLink="/home"
+          fragment="kontakt-section"
+          class="btn btn-link p-0 text-white border-0"
+          aria-label="Zum Kontaktbereich scrollen"
+          (click)="closeMenu()"
+        >
           <i class="bi bi-signal fs-4"></i>
         </a>
       </div>

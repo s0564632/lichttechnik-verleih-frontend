@@ -1,5 +1,5 @@
 import { Component, signal, HostListener, ElementRef, inject } from '@angular/core';
-import { RouterLink, RouterLinkActive } from '@angular/router';
+import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 
 @Component({
   selector: 'app-navbar',
@@ -10,6 +10,7 @@ import { RouterLink, RouterLinkActive } from '@angular/router';
 })
 export class Navbar {
   private readonly elementRef = inject(ElementRef);
+  private readonly router = inject(Router);
 
   isDropdownOpen = signal(false);
   offeneGruppe = signal<string | null>(null);
@@ -58,6 +59,15 @@ export class Navbar {
       unterpunkte: ['Projektion', 'Event-Zubehör', 'LED-/Pixel-Zubehör'],
     },
   ];
+
+  search(value: string): void {
+    this.router.navigate(['/shop'],
+      { queryParams: {
+        suche: value.trim() || null,
+      }, 
+    queryParamsHandling: 'merge',
+  });
+  }
 
   toggleHauptmenue(): void {
     this.isDropdownOpen.set(!this.isDropdownOpen());
