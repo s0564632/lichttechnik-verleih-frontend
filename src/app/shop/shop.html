@@ -7,13 +7,20 @@
     </div>
   }
 
-  @if (errorMessage()) {
+  @if (loadError()) {
     <div class="alert alert-danger text-center" role="alert">
-      {{ errorMessage() }}
+      {{ loadError() }}
     </div>
   }
 
-  @if (!isLoading() && !errorMessage()) {
+  @if (!loadError()) {
+
+    @if (actionError()) {
+      <div class="alert alert-warning alert-dismissible fade show mb-4" role="alert">
+        {{ actionError() }}
+        <button type="button" class="btn-close" aria-label="Schließen" (click)="actionError.set(null)"></button>
+      </div>
+    }
     <div class="row g-4">
       @for (item of filteredEquipmentListe(); track item._id) {
         <div class="col-12 col-md-6 col-lg-4">
@@ -35,8 +42,8 @@
               <button 
                 (click)="rentEquipment(item._id)" 
                 class="btn btn-outline-primary w-100 fw-bold"
-                [disabled]="item.quantity <= 0">
-                {{ item.quantity > 0 ? 'Jetzt mieten' : 'Ausverkauft' }}
+                [disabled]="item.quantity <= 0 || isSaving()">
+                {{ isSaving() ? 'Wird verarbeitet...' : (item.quantity > 0 ? 'Jetzt mieten' : 'Ausverkauft')}}
               </button>
             </div>
           </div>
