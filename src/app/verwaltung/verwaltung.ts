@@ -8,7 +8,7 @@ import {
   Validators,
 } from '@angular/forms';
 import { EquipmentService } from '../services/equipment';
-import { Equipment } from '../interfaces/equipment.interface';
+import { Equipment, EquipmentInput } from '../interfaces/equipment.interface';
 import { finalize } from 'rxjs';
 
 @Component({
@@ -119,7 +119,6 @@ export class Verwaltung implements OnInit {
   }
 
   // --- Bearbeiten ---
-
   public openEditModal(equipment: Equipment): void {
     this.selectedEquipment.set(equipment);
     this.showDeleteModal.set(false);
@@ -143,7 +142,7 @@ export class Verwaltung implements OnInit {
     }
 
     this.isSaving.set(true);
-    const updatedEquipment: Equipment = this.editEquipmentForm.value;
+    const updatedEquipment: EquipmentInput = this.editEquipmentForm.value;
 
     this.equipmentService.updateEquipment(equipment._id, updatedEquipment)
       .pipe(finalize(() => this.isSaving.set(false)))
@@ -227,17 +226,21 @@ export class Verwaltung implements OnInit {
   }
 
   public onSubmitCreate(): void {
-    if (this.equipmentForm.invalid) {
+    if (this.equipmentForm.invalid || this.isSaving()) {
       return;
     }
 
-    const newEquipment: Equipment = this.equipmentForm.value;
+    this.isSaving.set(true);
+    const newEquipment: EquipmentInput = this.equipmentForm.value;
 
-    this.equipmentService.createEquipment(newEquipment).subscribe({
+    this.equipmentService.createEquipment(newEquipment)
+    .pipe(finalize(() => this.isSaving.set(false)))
+    .subscribe({
       next: (createdItem: Equipment) => {
         this.equipmentListe.update((items) => [...items, createdItem]);
         this.equipmentForm.reset({ priceDay: 0, quantity: 1 });
         this.showCreateModal.set(false);
+        this.actionError.set(null);
       },
       error: (error: unknown) => {
         console.error('[Verwaltung] Erstellen fehlgeschlagen:', error);
