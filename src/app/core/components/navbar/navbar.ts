@@ -61,12 +61,12 @@ export class Navbar {
   ];
 
   search(value: string): void {
-    this.router.navigate(['/shop'],
-      { queryParams: {
+    this.router.navigate(['/shop'], {
+      queryParams: {
         suche: value.trim() || null,
-      }, 
-    queryParamsHandling: 'merge',
-  });
+      },
+      queryParamsHandling: 'merge',
+    });
   }
 
   toggleHauptmenue(): void {
@@ -78,6 +78,10 @@ export class Navbar {
 
   toggleGruppe(titel: string): void {
     this.offeneGruppe.set(this.offeneGruppe() === titel ? null : titel);
+  }
+
+  zeigeKategorie(titel: string): void {
+    this.offeneGruppe.set(titel);
   }
 
   closeMenu(): void {
@@ -135,5 +139,4 @@ export class Navbar {
         break;
     }
   }
-
 }

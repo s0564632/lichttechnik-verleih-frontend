@@ -32,7 +32,11 @@
         </li>
 
         <!-- Zweistufiges Flyout-Menü -->
-        <li class="nav-item navbar-flyout">
+        <li
+          class="nav-item navbar-flyout"
+          (mouseenter)="isDropdownOpen.set(true)"
+          (mouseleave)="isDropdownOpen.set(false); offeneGruppe.set(null)"
+        >
           <button
             class="navbar-category-button"
             type="button"
@@ -42,11 +46,12 @@
             [attr.aria-expanded]="isDropdownOpen()"
             aria-controls="hauptKategorieMenu"
             aria-haspopup="true"
+            (keydown)="handleKeydown($event, 1)"
           >
-          <span>
-            Produkte 
-            <span class="visually-hidden"> Untermenü öffnen für</span>
-          </span>
+            <span>
+              Produkte
+              <span class="visually-hidden"> Untermenü öffnen für</span>
+            </span>
             <span class="category-arrow" aria-hidden="true">›</span>
           </button>
 
@@ -67,22 +72,27 @@
                   <button
                     class="navbar-category-button"
                     type="button"
-                    id="subBtn-{{i}}"
+                    id="subBtn-{{ i }}"
                     [class.active]="offeneGruppe() === gruppe.titel"
                     [attr.aria-expanded]="offeneGruppe() === gruppe.titel"
-                    [attr.aria-controls]="'subMenu-'+i"
+                    [attr.aria-controls]="'subMenu-' + i"
                     aria-haspopup="true"
                     (click)="toggleGruppe(gruppe.titel)"
+                    (mouseenter)="zeigeKategorie(gruppe.titel)"
                   >
-                  <span>
-                    {{ gruppe.titel }}
-                    <span class="visually-hidden">Unterkategorien anzeigen für</span>
+                    <span>
+                      {{ gruppe.titel }}
+                      <span class="visually-hidden">Unterkategorien anzeigen für</span>
                     </span>
                     <span class="category-arrow" aria-hidden="true">›</span>
                   </button>
 
                   @if (offeneGruppe() === gruppe.titel) {
-                    <ul class="navbar-submenu" id="subMenu-{{i}}" aria-labelledby="subBtn-{{i}}">
+                    <ul
+                      class="navbar-submenu"
+                      id="subMenu-{{ i }}"
+                      aria-labelledby="subBtn-{{ i }}"
+                    >
                       @for (sub of gruppe.unterpunkte; track sub) {
                         <li>
                           <a
