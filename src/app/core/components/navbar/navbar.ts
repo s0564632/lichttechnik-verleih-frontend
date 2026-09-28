@@ -96,4 +96,44 @@ export class Navbar {
   onEscapeKey(): void {
     this.closeMenu();
   }
+
+  handleKeydown(event: KeyboardEvent, index: number): void {
+    switch (event.key) {
+      case 'ArrowDown':
+        event.preventDefault();
+        // Springt zur nächsten Oberkategorie
+        const nextBtn = document.getElementById(`subBtn-${index + 1}`);
+        if (nextBtn) nextBtn.focus();
+        break;
+
+      case 'ArrowUp':
+        event.preventDefault();
+        // Springt zur vorherigen Oberkategorie
+        const prevBtn = document.getElementById(`subBtn-${index - 1}`);
+        if (prevBtn) prevBtn.focus();
+        break;
+
+      case 'ArrowRight':
+      case 'Enter':
+      case ' ':
+        // Öffnet das Untermenü mit Signals und fokussiert den ersten Link
+        if (this.offeneGruppe() !== this.kategorieGruppen[index].titel) {
+          this.toggleGruppe(this.kategorieGruppen[index].titel);
+        }
+        setTimeout(() => {
+          const subMenu = document.getElementById(`subMenu-${index}`);
+          const firstLink = subMenu?.querySelector('a');
+          if (firstLink) firstLink.focus();
+        }, 50);
+        break;
+
+      case 'ArrowLeft':
+        event.preventDefault();
+        // Schließt das Untermenü und springt zurück auf die Oberkategorie
+        this.offeneGruppe.set(null);
+        document.getElementById(`subBtn-${index}`)?.focus();
+        break;
+    }
+  }
+
 }

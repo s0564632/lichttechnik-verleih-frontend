@@ -2,14 +2,23 @@
   background-color: #740944;
 }
 
-.bg-navbar-pink .navbar-brand,
-.bg-navbar-pink .nav-link {
+.bg-navbar-pink .navbar-brand {
   color: #ffffff;
+  font-weight: 700;
 }
 
-.bg-navbar-pink .nav-link:hover,
+.bg-navbar-pink .nav-link {
+  color: rgba(255, 255, 255, 0.9);
+  font-weight: 500;
+  padding: 0.5rem 0.75rem;
+  border-radius: 0.375rem;
+  transition: all 0.2s ease-in-out;
+}
+
+.bg-navbar-pink .nav-link:hover, 
 .bg-navbar-pink .nav-link:focus-visible {
   color: #ffffff;
+  background-color: rgba(255, 255, 255, 0.15);
 }
 
 /* Barrierefreies Flyout-Menü */
@@ -23,7 +32,6 @@
   top: 100%;
   left: 0;
   min-width: 18rem;
-  margin-top: 0.25rem;
   padding: 0.5rem;
   background-color: var(--bs-body-bg, #ffffff);
   border: 1px solid var(--bs-border-color, #dee2e6);
@@ -53,28 +61,44 @@
   font: inherit;
   font-weight: 600;
   cursor: pointer;
+  transition: all 0.15s ease-in-out;
 }
 
 /* Der Produkte-Button in der pinken Navbar und helle Schrift */
-.bg-navbar-pink > .container > .collapse > .navbar-nav > .nav-item.navbar-flyout > .navbar-category-button {
+.bg-navbar-pink .navbar-nav > .navbar-flyout > .navbar-category-button {
   color: #ffffff;
+  background:  transparent;
+}
+/* Optimiert für Barrierefreiheit - weisser Fokusring */
+.bg-navbar-pink .navbar-nav > .navbar-flyout > .navbar-category-button:focus-visible { 
+  outline: 3px solid #ffffff;
+  outline-offset: 2px;
 }
 
+.bg-navbar-pink .navbar-nav > .navbar-flyout > .navbar-category-button.active {
+  background-color: var(--bs-tertiary-bg, #f8f9f8);
+  color: #740944;
+}
+
+.bg-navbar-pink .navbar-nav > .navbar-flyout > .navbar-category-button.active:focus-visible {
+outline: 3px solid #212529;
+outline-offset: -3px; 
+}
+
+
 /* Hover und Tastatur für die Hauptkategorie */
-.navbar-category-button:hover,
-.navbar-category-button:focus-visible,
-.navbar-category-button.active {
+.navbar-category-menu .navbar-category-button:hover,
+.navbar-category-menu .navbar-category-button:active {
   background-color: var(--bs-tertiary-bg, #f8f9fa);
   color: var(--bs-emphasis-color, #740944);
 }
 
-/* Tastatur-Fokus für die Barrierefreiheit */
-.navbar-category-button:focus-visible {
-  outline: 3px solid var(--bs-primary, #740944);
-  outline-offset: 2px;
+.navbar-category-menu .navbar-category-button:focus-visible{
+outline: 3px solid #740944;
+outline-offset: -2px;
 }
 
-.category-arrow {
+.category-arrow{
   font-size: 1.25rem;
   line-height: 1;
   transition: transform 0.15s ease;
@@ -101,11 +125,17 @@
 }
 
 .navbar-submenu .dropdown-item {
-  padding: 0.6rem 0.75rem;
+  transition: all 0.15s ease-in-out;
 }
 
+.navbar-submenu .dropdown-item:hover,
 .navbar-submenu .dropdown-item:focus-visible {
-  outline: 3px solid var(--bs-primary, #740944);
+  background-color: var(--bs-tertiary-bg, #f8f9fa);
+  color: #740944;
+}
+
+.navbar-submenu .dropdown-item:focus-visible{
+  outline: 3px solid #740944;
   outline-offset: -2px;
 }
 

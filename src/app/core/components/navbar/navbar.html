@@ -1,5 +1,5 @@
 <!-- Navbar-Bereich -->
-<nav class="navbar navbar-expand-lg bg-navbar-pink border-bottom mb-4" aria-label="Hauptnavigation">
+<nav class="navbar navbar-expand-lg bg-navbar-pink" aria-label="Hauptnavigation">
   <div class="container">
     <!-- Logo / Titel -->
     <a routerLink="/" class="navbar-brand fw-bold" (click)="closeMenu()">Leons Lichttechnik</a>
@@ -40,9 +40,14 @@
             (click)="toggleHauptmenue()"
             [class.active]="isDropdownOpen()"
             [attr.aria-expanded]="isDropdownOpen()"
+            aria-controls="hauptKategorieMenu"
             aria-haspopup="true"
           >
-            Produkte <span class="category-arrow" aria-hidden="true">›</span>
+          <span>
+            Produkte 
+            <span class="visually-hidden"> Untermenü öffnen für</span>
+          </span>
+            <span class="category-arrow" aria-hidden="true">›</span>
           </button>
 
           @if (isDropdownOpen()) {
@@ -57,21 +62,27 @@
               </li>
               <li><hr class="dropdown-divider my-2" /></li>
 
-              @for (gruppe of kategorieGruppen; track gruppe.titel) {
+              @for (gruppe of kategorieGruppen; track gruppe.titel; let i = $index) {
                 <li class="navbar-category-item">
                   <button
                     class="navbar-category-button"
                     type="button"
+                    id="subBtn-{{i}}"
                     [class.active]="offeneGruppe() === gruppe.titel"
                     [attr.aria-expanded]="offeneGruppe() === gruppe.titel"
+                    [attr.aria-controls]="'subMenu-'+i"
                     aria-haspopup="true"
                     (click)="toggleGruppe(gruppe.titel)"
                   >
-                    {{ gruppe.titel }} <span class="category-arrow" aria-hidden="true">›</span>
+                  <span>
+                    {{ gruppe.titel }}
+                    <span class="visually-hidden">Unterkategorien anzeigen für</span>
+                    </span>
+                    <span class="category-arrow" aria-hidden="true">›</span>
                   </button>
 
                   @if (offeneGruppe() === gruppe.titel) {
-                    <ul class="navbar-submenu">
+                    <ul class="navbar-submenu" id="subMenu-{{i}}" aria-labelledby="subBtn-{{i}}">
                       @for (sub of gruppe.unterpunkte; track sub) {
                         <li>
                           <a
