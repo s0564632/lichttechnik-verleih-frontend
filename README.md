@@ -1,19 +1,32 @@
 # Lichttechnik-Verleih – Frontend
 
-***https://catlights.synoptx.net/shop?***
+https://catlights.synoptx.net/shop?
 
 Das Frontend des Projekts **Leons Lichttechnik-Verleih** stellt die clientseitige Benutzeroberfläche für die Recherche, Ausleihe und Verwaltung von Lichttechnik-Equipment bereit.
+
+
 
 Die Anwendung wurde mit **Angular 22** auf Basis der Standalone Component Architecture entwickelt. Für die Gestaltung und das responsive Layout werden **Bootstrap 5.3** und Bootstrap Icons verwendet. Die Kommunikation mit dem Backend erfolgt über den Angular `HttpClient` und eine REST-API.
 
 ## Features
 
 * Responsive Startseite mit Hero- und Kontaktbereich
+
+![Shop Ansicht Mobile](src/assets/readme-pics/mobileScreen.png)
+
 * Übersicht des verfügbaren Lichttechnik-Equipments
+
+![Shop Ansicht Desktop](src/assets/readme-pics/shop.png)
+
 * Suche nach Equipment
 * Filterung nach Kategorien und Unterkategorien
+![Kategoriemenü geöffnet](src/assets/readme-pics/dropDownAusgeklappt.png)
+
 * Verleihfunktion mit Bestandsaktualisierung
 * Administrativer Verwaltungsbereich
+
+![Admin-Bereich Maske](src/assets/readme-pics/adminBereich.png)
+
 * Erstellen, Bearbeiten und Löschen von Equipment
 * Reaktive Formulare mit Validierung
 * Statusanzeige für verfügbares und verliehenes Equipment
@@ -51,12 +64,16 @@ Die Anwendung ist in eigenständige Angular-Komponenten und einen zentralen Serv
 
 * **HomeComponent**
   Startseite mit Hero-Bereich und Kontaktbereich.
+  ![Startseite der Verleihplattform](src/assets/readme-pics/startseiteLL.png)
 
 * **Navbar**
   Globale Navigation mit Kategoriemenü, Suche und responsiver Menüsteuerung.
 
+  ![Kategoriemenü geöffnet](src/assets/readme-pics/dropDownAusgeklappt.png)
+
 * **Shop**
   Öffentliche Equipment-Übersicht mit Suche, Kategorie-Filter und Verleihfunktion.
+  ![Öffentliche Shop-Übersicht](src/assets/readme-pics/shop.png)
 
 * **Verwaltung**
   Administrativer Bereich für die Verwaltung des Equipment-Bestands.
@@ -161,6 +178,10 @@ Die Dialoge für Erstellen, Bearbeiten und Löschen werden direkt über Angular 
 ## Navigation
 
 Die Navbar enthält ein zweistufiges Kategoriemenü.
+
+![Shop Ansicht Mobile](src/assets/readme-pics/mobileScreen.png)
+
+![Kategoriemenü geöffnet](src/assets/readme-pics/dropDownAusgeklappt.png)
 
 Die Kategorien sind in Hauptgruppen und Unterkategorien gegliedert. Die Navigation unterstützt:
 
