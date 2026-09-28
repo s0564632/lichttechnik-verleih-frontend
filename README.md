@@ -1,51 +1,315 @@
-# Lichttechnik-Verleih Frontend
+# Lichttechnik-Verleih – Frontend
 
-Dieses Repository enthält die clientseitige Benutzeroberfläche (Frontend) der Lichttechnik-Verleihplattform. Die Anwendung ermöglicht Usern und Admins die visuelle Interaktion mit dem Lichttechnik-Bestand.
+***https://catlights.synoptx.net/shop?***
+
+Das Frontend des Projekts **Leons Lichttechnik-Verleih** stellt die clientseitige Benutzeroberfläche für die Recherche, Ausleihe und Verwaltung von Lichttechnik-Equipment bereit.
+
+Die Anwendung wurde mit **Angular 22** auf Basis der Standalone Component Architecture entwickelt. Für die Gestaltung und das responsive Layout werden **Bootstrap 5.3** und Bootstrap Icons verwendet. Die Kommunikation mit dem Backend erfolgt über den Angular `HttpClient` und eine REST-API.
+
+## Features
+
+* Responsive Startseite mit Hero- und Kontaktbereich
+* Übersicht des verfügbaren Lichttechnik-Equipments
+* Suche nach Equipment
+* Filterung nach Kategorien und Unterkategorien
+* Verleihfunktion mit Bestandsaktualisierung
+* Administrativer Verwaltungsbereich
+* Erstellen, Bearbeiten und Löschen von Equipment
+* Reaktive Formulare mit Validierung
+* Statusanzeige für verfügbares und verliehenes Equipment
+* Zweistufiges Kategoriemenü als Flyout-Navigation
+* Tastatur- und Klicksteuerung der Navigation
+* URL-basierte Such- und Kategorieparameter
+* Fehlerbehandlung für Lade- und Aktionsfehler
 
 ## Technologie-Stack
 
-- **Framework:** Angular (v17/v18)
-- **Design-Framework:** Bootstrap (v5)
-- **Styling:** CSS3
+| Technologie        | Verwendung                    |
+| ------------------ | ----------------------------- |
+| Angular 22         | Frontend-Framework            |
+| TypeScript         | Programmiersprache            |
+| Angular Signals    | Zustandsverwaltung            |
+| RxJS               | Reaktive Datenverarbeitung    |
+| Bootstrap 5.3      | UI- und CSS-Framework         |
+| Bootstrap Icons    | Icons                         |
+| Angular Router     | Routing                       |
+| Angular HttpClient | Kommunikation mit dem Backend |
+| Reactive Forms     | Formulare und Validierung     |
+| Jasmine / Karma    | Tests                         |
+| Angular CLI        | Entwicklung und Build         |
 
-## Aktueller Entwicklungsstand
+Die Anwendung verwendet Angular Standalone Components und benötigt daher keine `NgModule`-Struktur.
 
-Das Frontend-Grundgerüst, die Datenbeschaffung sowie die responsive Benutzeroberfläche wurden erfolgreich implementiert:
-- **Workspace-Architektur:** Initialisierung des Angular-Projekts inklusive Routing-Konfiguration und strikter Typisierung.
-- **UI-Infrastruktur:** Lokale Installation des Bootstrap-Frameworks und globale Registrierung über die Konfigurationsdatei `angular.json`.
-- **API-Service-Integration:** Implementierung eines zentralen asynchronen Datendienstes (`EquipmentService`) unter Verwendung des Angular `HttpClient` zur Kommunikation mit der Express-REST-API (`http://localhost:3000/api/equipment`).
-- **Reaktives Zustandsmanagement:** Anbindung des Services an die App-Komponente mittels moderner Angular *Signals* (`signal`) zur performanten, feingranularen Datenverwaltung.
-- **Datenschicht-Typisierung:** Erstellung eines dedizierten TypeScript-Interfaces (`Equipment`), welches die Datenstruktur der MongoDB-Dokumente zur Compile-Zeit absichert.
-- **Responsive Bestands-Visualisierung (Ticket #10):** Realisierung eines dynamischen Grid-Layouts mittels Bootstrap-Cards. Die Anzeige verfügt über integriertes Lade- und Fehlermanagement (Spinner/Alert-Erkennung via Signals) sowie kontextbasierte Status-Badges („Bereit“ / „Verliehen“) via `ngClass`.
-- **Reaktive Such- und Filterpipeline (Ticket #11):** Integration einer echtzeitfähigen Suchleiste sowie einer dynamischen Kategorieregelung. Die Zustandstransformation wird über caching-optimierte `computed` Signals gesteuert, um redundante Array-Operationen bei UI-Repaints zu unterbinden und die Filterkategorien duplikatfrei zur Laufzeit aus dem Datenstrom zu extrahieren.
+## Architektur
 
-## Dokumentation technischer Herausforderungen
+Die Anwendung ist in eigenständige Angular-Komponenten und einen zentralen Service für die Kommunikation mit der REST-API gegliedert.
 
-### 1. Merge-Konflikte bei der Projekt-Initialisierung
-**Problem:** Bei der Erstellung des Angular-Workspaces direkt im Projektverzeichnis mittels Angular CLI kam es zu Dateikonflikten mit den bereits durch GitHub automatisch generierten Dateien (`.gitignore` und `README.md`). 
-**Lösung:** Das Verzeichnis wurde manuell bereinigt. Anschließend wurde der Initialisierungsbefehl der Angular CLI erneut ausgeführt, wodurch die vollständige Angular-Dateistruktur fehlerfrei generiert werden konnte.
+### Zentrale Komponenten
 
-### 2. Typisierungs- und Compilerkonflikte beim TypeScript-Build
-**Problem:** Der Compiler meldete Fehler bezüglich fehlender Typdefinitionen für das Test-Framework `jasmine` innerhalb der Datei `tsconfig.spec.json`. Parallel dazu traten implizite `any`-Typfehler bei den API-Callback-Parametern auf.
-**Lösung:** Die globalen Test-Typen im `types`-Array der `tsconfig.spec.json` wurden geleert. Die impliziten Typen wurden durch eine explizite Typisierung der Callback-Parameter (`data: Equipment[]`, `error: any`) im Datenstrom aufgelöst.
+* **App**
+  Einstiegspunkt der Angular-Anwendung und übergeordnete Anwendungskomponente.
 
-### 3. Fehlendes Injection-Token im Komponenten-Constructor
-**Problem:** Aufgrund der restriktiven Konfiguration der TypeScript-Metadaten verweigerte Angular die klassische Constructor-Injection des `EquipmentService` innerhalb der Hauptkomponente (`No suitable injection token`).
-**Lösung:** Die Architektur wurde auf die funktionale Dependency Injection von Angular umgestellt. Der Service wird nun direkt als Klassenattribut über die integrierte `inject()`-Funktion instanziiert.
+* **HomeComponent**
+  Startseite mit Hero-Bereich und Kontaktbereich.
 
-### 4. Template- und Typisierungsasynchronität nach Git-Operationen
-**Problem:** Nach der Isolation von Feature-Zweigen mittels Git kam es zu einem temporären strukturellen Mismatch zwischen dem fortgeschrittenen HTML-Template und den zugrundeliegenden TypeScript-Dateien. Der Compiler meldete 12 Defizite (u. a. fehlende Property-Zuweisungen auf dem `Equipment`-Typ sowie ein blockiertes `ngClass`-Binding).
-**Lösung:** Das `Equipment`-Interface wurde um die fehlenden optionalen und strikten Entitätsfelder erweitert. Zudem wurde das `CommonModule` explizit in die `imports` der Standalone-Komponente aufgenommen, um die Angular-Direktiven für das Template nutzbar zu machen und den Build-Prozess zu stabilisieren.
+* **Navbar**
+  Globale Navigation mit Kategoriemenü, Suche und responsiver Menüsteuerung.
 
-### 5. Feldbezeichner-Mismatch (Nomenklatur-Inkonsistenz) zwischen API-Payload und UI-Template
-**Problem:** Nach erfolgreicher Integration des HTTP-Services blockierten Compilerfehler des Typs `TS2339: Property '...' does not exist on type 'Equipment'` die Anwendung. Die REST-API lieferte die MongoDB-Dokumente mit englischen Feldbezeichnern (`_id`, `category`, `priceDay`, `description`, `quantity`), während die lokale Datenmodellierung im Frontend noch auf obsoleten deutschen Variablen (`id`, `kategorie`, `preis`, `beschreibung`, `verfuegbar`) aufbaute.
-**Lösung:** Das TypeScript-Interface (`equipment.interface.ts`) sowie das deklarative HTML-Template (`app.html`) wurden vollständig auf die englische Datenstruktur des Backends refaktoriert, um die strukturelle Typsicherheit zur Compile-Zeit wiederherzustellen.
+* **Shop**
+  Öffentliche Equipment-Übersicht mit Suche, Kategorie-Filter und Verleihfunktion.
 
-### 6. Inhaltlicher Dokumentationskonflikt bei Branch-Zusammenführung
-**Problem:** Beim Mergen des Feature-Branches zur Fehlerbehebung in den Hauptzweig (`main`) trat ein struktureller Konflikt in der Datei `README.md` auf, welcher den automatischen Integrationsprozess blockierte.
-**Lösung:** Der Konflikt wurde über die Konsole aufgelöst, indem die Version des Hauptzweigs mittels `git checkout --ours README.md` temporär isoliert und die Datei anschließend über eine manuelle Index-Registrierung (`git add`) sowie einen dedizierten Merge-Commit erfolgreich konsolidiert wurde.
+* **Verwaltung**
+  Administrativer Bereich für die Verwaltung des Equipment-Bestands.
 
-## Zukünftige Erweiterungen / Roadmap
+  | ![Ausleihe](src/assets/readme-pics/ausleihButtonFeat.png) | ![Verliehen](src/assets/readme-pics/verliehenButton.png) |
 
-Die folgenden Implementierungsschritte sind für die clientseitige Entwicklung geplant:
-1. **Echtzeit-Validierung:** Integration von reaktiven Formularen (`ReactiveFormsModule`) für das spätere Hinzufügen neuer Lichttechnik-Komponenten.
+### EquipmentService
+
+Der `EquipmentService` kapselt sämtliche HTTP-Anfragen an das Backend.
+
+```text
+src/app/
+├── core/
+│   └── components/
+│       └── navbar/
+├── home/
+├── shop/
+├── verwaltung/
+├── interfaces/
+│   └── equipment.interface.ts
+├── services/
+│   └── equipment.ts
+├── app.ts
+├── app.config.ts
+└── app.routes.ts
+```
+
+Das zentrale Datenmodell ist das Interface `Equipment`.
+
+```typescript
+interface Equipment {
+  _id: string;
+  name: string;
+  category: string;
+  subCategory: string;
+  lengthValue?: number | null;
+  lengthUnit?: string;
+  quantity: number;
+  priceDay: number;
+  description: string;
+  createdAt?: string;
+  updatedAt?: string;
+}
+```
+
+Für das Erstellen und Bearbeiten von Equipment wird zusätzlich der Typ `EquipmentInput` verwendet. Dabei werden serverseitig verwaltete Felder wie `_id`, `__v` und Zeitstempel ausgeschlossen.
+
+## Routing
+
+Die Anwendung verwendet den Angular Router.
+
+| Route         | Komponente      | Funktion                        |
+| ------------- | --------------- | ------------------------------- |
+| `/`           | Weiterleitung   | Weiterleitung auf `/home`       |
+| `/home`       | `HomeComponent` | Startseite                      |
+| `/shop`       | `Shop`          | Öffentliche Equipment-Übersicht |
+| `/verwaltung` | `Verwaltung`    | Equipment-Verwaltung            |
+
+Die Anwendung verwendet außerdem URL-Query-Parameter für die Suche und Kategoriefilterung.
+
+Beispiel:
+
+```text
+/shop?suche=LED
+/shop?kategorie=LED-Scheinwerfer
+```
+
+Die Query-Parameter werden über Angular `toSignal()` in reaktive Zustände überführt.
+
+## Shop
+
+Die Shop-Komponente lädt den aktuellen Equipment-Bestand über den `EquipmentService` vom Backend.
+
+![Dynamische Kategorieregelung via @for-Schleife](src/assets/readme-pics/dynamischeKategorie.png)
+
+Die angezeigte Liste kann anhand von Suchbegriff und Kategorie gefiltert werden. Die Filterung wird über ein `computed` Signal abgebildet.
+
+Für die Verleihfunktion wird der entsprechende Equipment-Eintrag über den Backend-Endpunkt aktualisiert. Während einer laufenden Aktion verhindert ein `isSaving`-Signal Mehrfachauslösungen.
+
+Für Fehler werden zwei getrennte Zustände verwendet:
+
+* `loadError` für Fehler beim Laden des Bestands
+* `actionError` für Fehler bei einzelnen Aktionen wie dem Verleih
+
+Dadurch bleibt die bereits geladene Equipment-Liste auch dann sichtbar, wenn beispielsweise eine einzelne Aktion fehlschlägt.
+
+## Equipment-Verwaltung
+
+Unter `/verwaltung` steht ein administrativer Bereich für die Verwaltung des Equipment-Bestands zur Verfügung.
+
+Unterstützt werden:
+
+* **Create** – neues Equipment anlegen
+* **Read** – vorhandenen Bestand anzeigen
+* **Update** – bestehendes Equipment bearbeiten
+* **Delete** – Equipment löschen
+
+Die Formulare verwenden Angular Reactive Forms mit `FormBuilder` und `Validators`.
+
+Die Dialoge für Erstellen, Bearbeiten und Löschen werden direkt über Angular Signals gesteuert. Dadurch wird auf eine Steuerung der Modals durch Bootstrap-JavaScript verzichtet.
+
+## Navigation
+
+Die Navbar enthält ein zweistufiges Kategoriemenü.
+
+Die Kategorien sind in Hauptgruppen und Unterkategorien gegliedert. Die Navigation unterstützt:
+
+* Maussteuerung
+* Tastatursteuerung
+* Schließen per Escape-Taste
+* Schließen bei Klick außerhalb des Menüs
+* Suche über URL-Query-Parameter
+
+## Voraussetzungen
+
+Für die lokale Entwicklung werden benötigt:
+
+* Node.js 18 oder höher
+* npm
+* Angular CLI
+* laufendes Backend
+* laufende MongoDB-Instanz über das Backend
+
+## Installation
+
+Repository klonen:
+
+```bash
+git clone https://github.com/s0564632/lichttechnik-verleih-frontend.git
+cd lichttechnik-verleih-frontend
+```
+
+Abhängigkeiten installieren:
+
+```bash
+npm install
+```
+
+## Backend starten
+
+Das Frontend erwartet das Backend auf Port `3000`.
+
+Das Backend ist in einem separaten Repository dokumentiert:
+
+`lichttechnik-verleih-backend`
+
+## Frontend starten
+
+Die Anwendung wird im Entwicklungsmodus mit dem konfigurierten Dev-Proxy gestartet:
+
+```bash
+npm start
+```
+
+Der Startbefehl verwendet:
+
+```text
+ng serve --proxy-config proxy.conf.json
+```
+
+Anschließend ist die Anwendung erreichbar unter:
+
+```text
+http://localhost:4200
+```
+
+## Kommunikation mit dem Backend
+
+Das Frontend verwendet relative API-Pfade:
+
+```text
+/api/equipment
+```
+
+Die Entwicklungsumgebung leitet diese Anfragen über den Angular Dev-Proxy an das lokale Backend auf Port `3000` weiter.
+
+Die Kommunikation wird vollständig über den `EquipmentService` gekapselt.
+
+Unterstützte Operationen:
+
+```text
+GET     /api/equipment
+POST    /api/equipment
+PUT     /api/equipment/:id
+PATCH   /api/equipment/:id/rent
+DELETE  /api/equipment/:id
+```
+
+## Tests
+
+Für Tests werden Jasmine und Karma zusammen mit den Angular-Testwerkzeugen verwendet.
+
+Tests können über die entsprechenden Angular-CLI-Befehle ausgeführt werden.
+
+## Technische Besonderheiten
+
+### Angular Signals
+
+Für die Zustandsverwaltung werden unter anderem `signal()`, `computed()` und `toSignal()` verwendet.
+
+Dadurch werden beispielsweise Such- und Filterzustände sowie UI-Zustände reaktiv abgebildet.
+
+### Reactive Forms
+
+Die Verwaltungsformulare verwenden Angular Reactive Forms und Validierungen, unter anderem für:
+
+* Pflichtfelder
+* Mindestlänge des Namens
+* gültige Tagespreise
+* gültige Bestandsmengen
+
+### Eigenständige Angular-Modals
+
+Die CRUD-Dialoge werden deklarativ über Angular gesteuert. Bootstrap-JavaScript wird für die Modals nicht benötigt.
+
+Dies vermeidet Konflikte zwischen direkten DOM-Manipulationen durch Bootstrap und Angulars Zustands- und Change-Detection-System.
+
+## Bekannte technische Herausforderungen
+
+Während der Entwicklung wurden unter anderem folgende Probleme gelöst:
+
+* Konflikte bei der Initialisierung des Angular-Workspaces in einem bereits bestehenden Git-Repository
+![Initialisierung des Angular-Workspaces](src/assets/readme-pics/angular-initialisierung.png)
+* fehlende Jasmine-Typdefinitionen und TypeScript-Konflikte
+* Umstellung auf Angulars funktionale Dependency Injection mit `inject()`
+* unterschiedliche Feldbezeichnungen zwischen Backend und Frontend
+* Konflikte zwischen Bootstrap-JavaScript und Angular bei Modal-Komponenten
+* Trennung von Lade- und Aktionsfehlern
+
+## Roadmap
+
+Mögliche zukünftige Erweiterungen:
+
+1. Authentifizierung und Zugriffsschutz für `/verwaltung`
+2. JWT-basierte Benutzerverwaltung
+3. strukturierte Auswahl der Unterkategorien im Verwaltungsformular
+4. Warenkorb
+5. Erweiterung der Mietfunktionen
+6. weitere Verbesserungen der Barrierefreiheit
+7. Deployment des Frontends auf eine Hosting-Plattform
+
+## KI-Transparenz
+
+## Transparenzverzeichnis der KI-Werkzeuge (Frontend)
+
+Für die Konzeption, Fehlersuche, Architekturfragen und Dokumentation der Angular-Anwendung wurden die LLM-Systeme **ChatGPT** und **Gemini** eingesetzt.
+
+| Einsatzbereich / Zweck | Beispiel-Prompts (Recherche & Debugging) | Technische Lösung / Ergebnis |
+| :--- | :--- | :--- |
+| **Angular-Architektur & Dev-Proxy** | • *„Wie nutzt man in Angular einen Dev-Proxy (`proxy.conf.json`) und warum sind relative API-Pfade besser als `http://localhost:3000`?“*<br>• *„Was sind die modernen Alternativen zu Konstruktor-Injection und styleUrls in Angular 22?“* | • Einbindung von `proxy.conf.json` mit Weiterleitung auf `localhost:3000` (Eintrag in `angular.json` unter `serve`).<br>• Umstellung auf relative Pfade (z. B. `/api/equipment`).<br>• Refactoring auf `inject(HttpClient)` und die singuläre Schreibweise `styleUrl` bei Standalone-Komponenten. |
+| **Signals & URL-Parametrisierung** | • *„Wie lese ich Query-Parameter in Angular als Signal aus und wie leite ich daraus gefilterte Listen mit `computed()` ab?“* | • Nutzung von `toSignal(route.queryParamMap.pipe(map(...)))` zur Erfassung von Suchbegriffen und Kategorien.<br>• Reaktive Datenfilterung via `computed()`.<br>• Verlinkung im Template über `[queryParams]`. |
+| **Template-Parsing & Routing** | • *„Was ist eine ICU-Nachricht in Angular-Templates und warum sind lose `{ }` im Text ein Problem?“*<br>• *„Wie funktioniert Anker-Scrolling im Angular-Router mit fragment und `withInMemoryScrolling`?“* | • Behebung von `Unexpected character "EOF"`-Fehlern durch Korrektur unvollständiger HTML-Tags und loser geschweifter Klammern.<br>• Aktivierung von `anchorScrolling: 'enabled'` in `provideRouter` und Verwendung von `routerLink` mit `fragment` anstelle nativer `href`-Attribute. |
+| **Control-Flow & UI-Komponenten** | • *„Wie steuere ich mit `@if` und `@empty` im Angular-Control-Flow Lade-, Fehler- und Leerzustand sauber?“*<br>• *„Wie funktionieren Bootstrap-5-Modals mit `data-bs-toggle` und `data-bs-dismiss` in Angular?“* | • Saubere Zustandstrennung: Content wird nur bei `!isLoading() && !loadError()` gerendert.<br>• Integration von `@empty` direkt in `@for`-Schleifen.<br>• Rückbau redundanter Angular Signals zugunsten nativer Bootstrap-Datenattribute für Modals; optionaler Zugriff via `viewChild()`. |
+| **Formular-Validierung** | • *„Wie definiere ich in Angular Reactive Forms Validatoren wie `required`, `minLength` und `min`?“* | • Implementierung von `FormBuilder` mit `Validators` für die Equipment-Erfassung.<br>• Bedingte Anzeige von Fehlermeldungen bei `invalid && touched`.<br>• Deklarative Deaktivierung des Absende-Buttons via `[disabled]`. |
+| **Unit Testing & Test-Runner** | • *„Was bedeutet der Fehler `NG0201 No provider for ActivatedRoute` in Angular und wie stellt man im TestBed einen Router bereit?“*<br>• *„Welcher Test-Runner ist im Angular-CLI-Builder `@angular/build:unit-test` standardmäßig hinterlegt?“* | • Fehlerbehebung durch Aufnahme von `provideRouter([])` und `provideHttpClientTesting()` in die `providers` des `TestBeds`.<br>• Anpassung der `tsconfig.spec.json` und Dokumentation an den Standard-Runner Vitest. |
+| **Git-Workflows & Dokumentation** | • *„Wie verwerfe ich alle uncommitteten Änderungen in `package.json` und `package-lock.json` und setze den Branch `51-angular-test-reperieren` auf den Stand von `origin` zurück?“*<br>• *„Welche Abschnitte gehören typischerweise in die README eines Node/Express-Projekts mit MongoDB?“* | • Gezieltes Zurücksetzen lokaler Konfigurationsdateien via `git restore`.<br>• Strukturierung des technischen Dokumentationsaufbaus im Markdown-Format. |
